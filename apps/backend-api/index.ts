@@ -1,9 +1,14 @@
 import fastify from 'fastify'
+import { compress } from 'compressor'
 
 const server = fastify()
 
 server.get('/ping', async (request, reply) => {
     return 'pong\n'
+})
+
+server.post('/compress', async (request, reply) => {
+    return compress(request.body)
 })
 
 server.listen({ port: 8080 }, (err, address) => {
