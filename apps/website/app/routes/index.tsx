@@ -1,4 +1,15 @@
+import { useEffect } from "react";
+
 export default function Index() {
+  useEffect(() => {
+    (async () => {
+      await fetch("http://localhost:8080/compress", {
+        method: "post",
+        body: "hello from `website` project!",
+      }).then((response) => response.text()).then(console.log);
+    })();
+  }, [])
+
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.4" }}>
       <h1>Welcome to Remix</h1>

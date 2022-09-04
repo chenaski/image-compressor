@@ -8,6 +8,7 @@ server.get('/ping', async (request, reply) => {
 })
 
 server.post('/compress', async (request, reply) => {
+    reply.headers({ "Access-Control-Allow-Origin": "*" })
     return compress(request.body)
 })
 
