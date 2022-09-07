@@ -1,4 +1,7 @@
 {
   "name": "image-compressor",
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "nx": "14.6.5"
+  }
 }
