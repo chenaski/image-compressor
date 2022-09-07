@@ -3,5 +3,8 @@
   "private": true,
   "devDependencies": {
     "nx": "14.6.5"
+  },
+  "dependencies": {
+    "prettier": "^2.7.1"
   }
 }
