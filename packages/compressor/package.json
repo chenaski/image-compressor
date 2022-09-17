@@ -1,9 +1,10 @@
 {
   "name": "compressor",
   "private": true,
+  "main": "src/index.ts",
   "scripts": {
-    "build": "tsc",
-    "dev": "nodemon index.ts"
+    "build": "rm -rf dist && tsc",
+    "dev": "nodemon src/index.ts"
   },
   "dependencies": {
     "nodemon": "^2.0.19",
