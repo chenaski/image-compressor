@@ -10,7 +10,8 @@
     "build": "remix build",
     "dev": "remix dev",
     "start": "remix-serve build",
-    "lint": "eslint app"
+    "lint": "eslint app",
+    "lint:fix": "eslint --fix app"
   },
   "dependencies": {
     "@remix-run/node": "^1.7.0",

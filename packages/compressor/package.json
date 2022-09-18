@@ -9,7 +9,8 @@
   "scripts": {
     "build": "rm -rf dist && tsc",
     "dev": "nodemon src/index.ts",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "lint:fix": "eslint --fix src"
   },
   "dependencies": {
     "nodemon": "^2.0.19",
