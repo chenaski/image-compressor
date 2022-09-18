@@ -15,6 +15,13 @@
     "lint": "eslint src",
     "lint:fix": "eslint --fix src"
   },
+  "lint-staged": {
+    "*.ts": [
+      "prettier -w",
+      "eslint --fix"
+    ],
+    "*.{json,md}": "prettier -w"
+  },
   "dependencies": {
     "compressor": "workspace:*",
     "fastify": "^4.5.3",

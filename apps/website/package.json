@@ -15,6 +15,13 @@
     "lint": "eslint app",
     "lint:fix": "eslint --fix app"
   },
+  "lint-staged": {
+    "*.{js,ts}": [
+      "prettier -w",
+      "eslint --fix"
+    ],
+    "*.{json,md}": "prettier -w"
+  },
   "dependencies": {
     "@remix-run/node": "^1.7.0",
     "@remix-run/react": "^1.7.0",
