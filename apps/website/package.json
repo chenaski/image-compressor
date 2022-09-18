@@ -10,6 +10,8 @@
     "build": "remix build",
     "dev": "remix dev",
     "start": "remix-serve build",
+    "format": "prettier -c app",
+    "format:fix": "prettier -w app",
     "lint": "eslint app",
     "lint:fix": "eslint --fix app"
   },

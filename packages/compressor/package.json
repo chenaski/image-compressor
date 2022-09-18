@@ -9,6 +9,8 @@
   "scripts": {
     "build": "rm -rf dist && tsc",
     "dev": "nodemon src/index.ts",
+    "format": "prettier -c src",
+    "format:fix": "prettier -w src",
     "lint": "eslint src",
     "lint:fix": "eslint --fix src"
   },
