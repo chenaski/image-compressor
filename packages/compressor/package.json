@@ -1,6 +1,10 @@
 {
   "name": "compressor",
   "private": true,
+  "packageManager": "pnpm@7.11.0",
+  "volta": {
+    "extends": "../../package.json"
+  },
   "main": "src/index.ts",
   "scripts": {
     "build": "rm -rf dist && tsc",

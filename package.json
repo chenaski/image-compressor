@@ -1,6 +1,10 @@
 {
   "name": "image-compressor",
   "private": true,
+  "packageManager": "pnpm@7.11.0",
+  "volta": {
+    "node": "16.17.0"
+  },
   "devDependencies": {
     "nx": "14.6.5"
   },
