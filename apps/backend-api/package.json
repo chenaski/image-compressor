@@ -9,7 +9,8 @@
   "scripts": {
     "build": "rm -rf dist && tsc",
     "start": "node dist",
-    "dev": "nodemon src/index.ts"
+    "dev": "nodemon src/index.ts",
+    "lint": "eslint src"
   },
   "dependencies": {
     "compressor": "workspace:*",

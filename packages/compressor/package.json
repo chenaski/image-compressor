@@ -8,7 +8,8 @@
   "main": "src/index.ts",
   "scripts": {
     "build": "rm -rf dist && tsc",
-    "dev": "nodemon src/index.ts"
+    "dev": "nodemon src/index.ts",
+    "lint": "eslint src"
   },
   "dependencies": {
     "nodemon": "^2.0.19",
