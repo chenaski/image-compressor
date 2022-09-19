@@ -15,10 +15,10 @@
     "dev:remix": "remix dev",
     "generate:css": "npx tailwindcss -o ./app/tailwind.css",
     "start": "remix-serve build",
-    "format": "prettier -c app",
-    "format:fix": "prettier -w app",
-    "lint": "eslint app",
-    "lint:fix": "eslint --fix app"
+    "format": "prettier -c .",
+    "format:fix": "prettier -w .",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix ."
   },
   "lint-staged": {
     "*.{js,ts}": [
