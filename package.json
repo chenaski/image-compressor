@@ -18,6 +18,10 @@
   },
   "scripts": {
     "prepare": "husky install",
-    "pre-commit": "npx lint-staged"
+    "pre-commit": "npx lint-staged",
+    "format": "nx run-many --target format",
+    "lint": "nx run-many --target lint",
+    "build": "nx run-many --target build",
+    "dev": "nx run-many --target dev"
   }
 }
