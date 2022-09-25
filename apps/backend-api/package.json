@@ -17,8 +17,8 @@
   },
   "lint-staged": {
     "*.ts": [
-      "prettier -w",
-      "eslint --fix"
+      "eslint --fix",
+      "prettier -w"
     ],
     "*.{json,md}": "prettier -w"
   },

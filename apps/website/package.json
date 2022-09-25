@@ -21,9 +21,9 @@
     "lint:fix": "eslint --fix ."
   },
   "lint-staged": {
-    "*.{js,ts}": [
-      "prettier -w",
-      "eslint --fix"
+    "*.{js,ts,tsx}": [
+      "eslint --fix",
+      "prettier -w"
     ],
     "*.{json,md}": "prettier -w"
   },
