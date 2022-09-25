@@ -4,7 +4,7 @@ import styles from './tailwind.css';
 
 export const meta: MetaFunction = () => ({
   charset: 'utf-8',
-  title: 'New Remix App',
+  title: 'Image Compressor',
   viewport: 'width=device-width,initial-scale=1',
 });
 

@@ -1,8 +1,10 @@
 import { PassThrough } from 'stream';
+import { randomUUID } from 'crypto';
 import type { EntryContext } from '@remix-run/node';
 import { Response } from '@remix-run/node';
 import { RemixServer } from '@remix-run/react';
 import { renderToPipeableStream } from 'react-dom/server';
+import { commitSession, getSession, SESSION_USER_ID } from '~/sessions';
 
 const ABORT_DELAY = 5000;
 
@@ -12,8 +14,15 @@ export default function handleRequest(
   responseHeaders: Headers,
   remixContext: EntryContext
 ) {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     let didError = false;
+
+    const session = await getSession(request.headers.get('Cookie'));
+
+    if (!session.has(SESSION_USER_ID)) {
+      session.set(SESSION_USER_ID, randomUUID());
+      responseHeaders.set('Set-Cookie', await commitSession(session));
+    }
 
     const { pipe, abort } = renderToPipeableStream(<RemixServer context={remixContext} url={request.url} />, {
       onShellReady: () => {
