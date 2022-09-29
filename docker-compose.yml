@@ -1,0 +1,14 @@
+services:
+  website:
+    image: website
+    environment:
+      PORT: ${WEBSITE_PORT}
+    ports:
+      - ${WEBSITE_PORT}:${WEBSITE_PORT}
+
+  backend-api:
+    image: backend-api
+    environment:
+      PORT: ${BACKEND_API_PORT}
+    ports:
+      - ${BACKEND_API_PORT}:${BACKEND_API_PORT}

@@ -5,9 +5,10 @@
   "volta": {
     "extends": "../../package.json"
   },
-  "main": "src/index.ts",
+  "main": "dist/index.js",
   "scripts": {
     "build": "rm -rf dist && tsc",
+    "docker:build": "docker build -f Dockerfile -t backend-api ../..",
     "start": "node dist",
     "dev": "nodemon src/index.ts",
     "format": "prettier -c .",

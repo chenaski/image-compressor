@@ -12,7 +12,8 @@ server.post('/compress', async (request, reply) => {
   return compress(request.body);
 });
 
-server.listen({ port: 8080 }, (err, address) => {
+const port = process.env.PORT ? parseInt(process.env.PORT) : 4000;
+server.listen({ port, host: '0.0.0.0' }, (err, address) => {
   if (err) {
     console.error(err);
     process.exit(1);
