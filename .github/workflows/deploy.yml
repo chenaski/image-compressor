@@ -93,3 +93,45 @@ jobs:
           tags: ${{ env.repository }}:${{ env.tags }},${{ env.repository }}:latest
           cache-from: type=registry,ref=${{ env.repository }}:${{ env.cache_tag }}
           cache-to: type=registry,ref=${{ env.repository }}:${{ env.cache_tag }},mode=max
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    steps:
+      - name: Cancel previous runs
+        uses: styfle/cancel-workflow-action@0.10.0
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Add docker compose configuration
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: docker-compose.yml
+          target: releases/${{ github.sha }}
+
+      - name: Pull new images and restart
+        uses: appleboy/ssh-action@master
+        env:
+          WEBSITE_IMAGE_TAG: ${{ github.ref_name }}-${{ github.sha }}
+          WEBSITE_PORT: ${{ secrets.WEBSITE_PORT }}
+          BACKEND_API_IMAGE_TAG: ${{ github.ref_name }}-${{ github.sha }}
+          BACKEND_API_PORT: ${{ secrets.BACKEND_API_PORT }}
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          envs: WEBSITE_IMAGE_TAG,WEBSITE_PORT,BACKEND_API_IMAGE_TAG,BACKEND_API_PORT
+          script: |
+            cd releases/${{ github.sha }}
+            echo "WEBSITE_IMAGE_TAG=$WEBSITE_IMAGE_TAG" > .env
+            echo "WEBSITE_PORT=$WEBSITE_PORT" >> .env
+            echo "BACKEND_API_IMAGE_TAG=$BACKEND_API_IMAGE_TAG" >> .env
+            echo "BACKEND_API_PORT=$BACKEND_API_PORT" >> .env
+            docker compose pull
+            docker compose up -d
