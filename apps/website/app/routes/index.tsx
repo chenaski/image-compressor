@@ -60,7 +60,7 @@ export default function Index() {
 
   return (
     <div className={'p-5'}>
-      <h1 className={'text-3xl font-bold underline'}>Image Compressor</h1>
+      <h1 className={'text-3xl font-bold underline'}>Image Compressor!</h1>
       <Form method={'post'} encType="multipart/form-data" className={'mt-2'}>
         <label>
           <input
