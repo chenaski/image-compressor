@@ -134,4 +134,4 @@ jobs:
             echo "BACKEND_API_IMAGE_TAG=$BACKEND_API_IMAGE_TAG" >> .env
             echo "BACKEND_API_PORT=$BACKEND_API_PORT" >> .env
             docker compose pull
-            docker compose up -d
+            docker compose -p image-compressor up -d
