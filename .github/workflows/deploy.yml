@@ -83,32 +83,59 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Add docker compose configuration
+      - name: Create production .env files
+        env:
+          WEBSITE_IMAGE_REPO: ${{ secrets.DOCKERHUB_USERNAME }}/image-compressor-website
+          WEBSITE_IMAGE_TAG: ${{ github.ref_name }}-${{ github.sha }}
+          WEBSITE_PORT: ${{ secrets.WEBSITE_PORT }}
+          WEBSITE_ENV_FILE: ${{ secrets.WEBSITE_ENV_FILE }}
+          WEBSITE_ENV_FILE_PATH: '.env.website'
+          BACKEND_API_IMAGE_REPO: ${{ secrets.DOCKERHUB_USERNAME }}/image-compressor-backend-api
+          BACKEND_API_IMAGE_TAG: ${{ github.ref_name }}-${{ github.sha }}
+          BACKEND_API_PORT: ${{ secrets.BACKEND_API_PORT }}
+        run: |
+          export WEBSITE_IMAGE_REPO="$WEBSITE_IMAGE_REPO"
+          export WEBSITE_IMAGE_TAG="$WEBSITE_IMAGE_TAG"
+          export WEBSITE_PORT="$WEBSITE_PORT"
+          export WEBSITE_ENV_FILE="$WEBSITE_ENV_FILE"
+          export WEBSITE_ENV_FILE_PATH="$WEBSITE_ENV_FILE_PATH"
+          export BACKEND_API_IMAGE_REPO="$BACKEND_API_IMAGE_REPO"
+          export BACKEND_API_IMAGE_TAG="$BACKEND_API_IMAGE_TAG"
+          export BACKEND_API_PORT="$BACKEND_API_PORT"
+          export TEST="$BACKEND_API_PORT"
+
+          echo "VARS ====="
+          cat $GITHUB_ENV
+          echo "VARS ====="
+          echo "ENV-----"
+          cat .env.production
+          echo "ENV-----"
+          echo "RESULT----"
+          envsubst < .env.production
+          echo "RESULT----"
+          echo TEST
+
+          envsubst < .env.production > .env.production
+          echo "$WEBSITE_ENV_FILE" > $WEBSITE_ENV_FILE_PATH
+
+      - name: Setup release dir
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: docker-compose.yml
+          source: docker-compose.yml,.env.production,.env.website
           target: releases/${{ github.sha }}
 
       - name: Pull new images and restart
         uses: appleboy/ssh-action@master
-        env:
-          WEBSITE_IMAGE_TAG: ${{ github.ref_name }}-${{ github.sha }}
-          WEBSITE_PORT: ${{ secrets.WEBSITE_PORT }}
-          BACKEND_API_IMAGE_TAG: ${{ github.ref_name }}-${{ github.sha }}
-          BACKEND_API_PORT: ${{ secrets.BACKEND_API_PORT }}
+
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          envs: WEBSITE_IMAGE_TAG,WEBSITE_PORT,BACKEND_API_IMAGE_TAG,BACKEND_API_PORT
           script: |
             cd releases/${{ github.sha }}
-            echo "WEBSITE_IMAGE_TAG=$WEBSITE_IMAGE_TAG" > .env
-            echo "WEBSITE_PORT=$WEBSITE_PORT" >> .env
-            echo "BACKEND_API_IMAGE_TAG=$BACKEND_API_IMAGE_TAG" >> .env
-            echo "BACKEND_API_PORT=$BACKEND_API_PORT" >> .env
+
             docker compose pull
-            docker compose -p image-compressor up -d
+            docker compose --env-file .env.production up -d

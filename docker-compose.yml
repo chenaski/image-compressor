@@ -1,14 +1,16 @@
 services:
   website:
-    image: chenaski/image-compressor-website:${WEBSITE_IMAGE_TAG}
+    image: ${WEBSITE_IMAGE_REPO}:${WEBSITE_IMAGE_TAG}
     restart: always
+    env_file:
+      - ${WEBSITE_ENV_FILE_PATH}
     environment:
       PORT: ${WEBSITE_PORT}
     ports:
       - ${WEBSITE_PORT}:${WEBSITE_PORT}
 
   backend-api:
-    image: chenaski/image-compressor-backend-api:${BACKEND_API_IMAGE_TAG}
+    image: ${BACKEND_API_IMAGE_REPO}:${BACKEND_API_IMAGE_TAG}
     restart: always
     environment:
       PORT: ${BACKEND_API_PORT}
