@@ -1,0 +1,34 @@
+services:
+  webserver:
+    image: nginx:1.15-alpine
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - .docker/nginx/conf:/etc/nginx/conf.d:ro
+      - ${CERTBOT_PATH}/certbot/conf:/etc/letsencrypt:ro
+      - ${CERTBOT_PATH}/certbot/www:/var/www/certbot:ro
+
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ${CERTBOT_PATH}/certbot/conf:/etc/letsencrypt:rw
+      - ${CERTBOT_PATH}/certbot/www:/var/www/certbot:rw
+
+  website:
+    image: ${WEBSITE_IMAGE_REPO}:${WEBSITE_IMAGE_TAG}
+    restart: always
+    env_file:
+      - ${WEBSITE_ENV_FILE_PATH}
+    environment:
+      PORT: ${WEBSITE_PORT}
+    ports:
+      - ${WEBSITE_PORT}:${WEBSITE_PORT}
+
+  backend-api:
+    image: ${BACKEND_API_IMAGE_REPO}:${BACKEND_API_IMAGE_TAG}
+    restart: always
+    environment:
+      PORT: ${BACKEND_API_PORT}
+    ports:
+      - ${BACKEND_API_PORT}:${BACKEND_API_PORT}

@@ -1,17 +1,19 @@
 services:
   website:
-    image: ${WEBSITE_IMAGE_REPO}:${WEBSITE_IMAGE_TAG}
-    restart: always
+    build:
+      context: .
+      dockerfile: apps/website/Dockerfile
     env_file:
-      - ${WEBSITE_ENV_FILE_PATH}
+      - apps/website/.env
     environment:
       PORT: ${WEBSITE_PORT}
     ports:
       - ${WEBSITE_PORT}:${WEBSITE_PORT}
 
   backend-api:
-    image: ${BACKEND_API_IMAGE_REPO}:${BACKEND_API_IMAGE_TAG}
-    restart: always
+    build:
+      context: .
+      dockerfile: apps/backend-api/Dockerfile
     environment:
       PORT: ${BACKEND_API_PORT}
     ports:
