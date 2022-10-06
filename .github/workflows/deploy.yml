@@ -85,6 +85,8 @@ jobs:
 
       - name: Create production .env files
         env:
+          DOMAIN: ${{ secrets.DOMAIN }}
+          COMPOSE_PROJECT_NAME: image-compressor
           WEBSITE_IMAGE_REPO: ${{ secrets.DOCKERHUB_USERNAME }}/image-compressor-website
           WEBSITE_IMAGE_TAG: ${{ github.ref_name }}-${{ github.sha }}
           WEBSITE_PORT: ${{ secrets.WEBSITE_PORT }}
@@ -102,20 +104,9 @@ jobs:
           export BACKEND_API_IMAGE_REPO="$BACKEND_API_IMAGE_REPO"
           export BACKEND_API_IMAGE_TAG="$BACKEND_API_IMAGE_TAG"
           export BACKEND_API_PORT="$BACKEND_API_PORT"
-          export TEST="$BACKEND_API_PORT"
 
-          echo "VARS ====="
-          cat $GITHUB_ENV
-          echo "VARS ====="
-          echo "ENV-----"
-          cat .env.production
-          echo "ENV-----"
-          echo "RESULT----"
-          envsubst < .env.production
-          echo "RESULT----"
-          echo TEST
+          envsubst < .env.production > .env
 
-          envsubst < .env.production > .env.production
           echo "$WEBSITE_ENV_FILE" > $WEBSITE_ENV_FILE_PATH
 
       - name: Setup release dir
@@ -124,7 +115,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: docker-compose.yml,.env.production,.env.website
+          source: docker-compose.yml,.env,.env.website
           target: releases/${{ github.sha }}
 
       - name: Pull new images and restart
@@ -138,4 +129,4 @@ jobs:
             cd releases/${{ github.sha }}
 
             docker compose pull
-            docker compose --env-file .env.production up -d
+            docker compose up -d
