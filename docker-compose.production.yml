@@ -1,19 +1,15 @@
 services:
   webserver:
-    image: nginx:1.15-alpine
+    image: nginx:1-alpine
     ports:
       - '80:80'
       - '443:443'
     volumes:
-      - .docker/nginx/conf:/etc/nginx/conf.d:ro
-      - ${CERTBOT_PATH}/certbot/conf:/etc/letsencrypt:ro
-      - ${CERTBOT_PATH}/certbot/www:/var/www/certbot:ro
-
-  certbot:
-    image: certbot/certbot
-    volumes:
-      - ${CERTBOT_PATH}/certbot/conf:/etc/letsencrypt:rw
-      - ${CERTBOT_PATH}/certbot/www:/var/www/certbot:rw
+      - .docker/nginx/conf:/etc/nginx/conf.d
+      - .docker/nginx/options-ssl-nginx.conf:/etc/nginx/options-ssl-nginx.conf
+      - .docker/nginx/ssl-dhparams.pem:/etc/nginx/ssl-dhparams.pem
+      - ${CERTBOT_PATH}/conf:/etc/letsencrypt:ro
+      - ${CERTBOT_PATH}/www:/var/www/certbot:ro
 
   website:
     image: ${WEBSITE_IMAGE_REPO}:${WEBSITE_IMAGE_TAG}
