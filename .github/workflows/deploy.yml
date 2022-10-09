@@ -124,25 +124,34 @@ jobs:
           envsubst '$DOMAIN:$WEBSITE_PORT' < .docker/nginx/conf/app.conf > tmp.conf
           mv tmp.conf .docker/nginx/conf/app.conf
 
-      - name: Setup release dir
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: docker-compose.production.yml,.docker,.env,.env.website
-          target: releases/${{ github.sha }}
+      - name: Setup SSH
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" | tr -d "\r" > ~/.ssh/id_ecdsa
+          chmod 600 ~/.ssh/id_ecdsa
+          ssh-keyscan -t ecdsa -H $SSH_HOST >> ~/.ssh/known_hosts
+
+      - name: Prepare new release directory
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          RELEASE_DIR: ~/releases/${{ github.sha }}
+        run: |
+          ssh $SSH_USER@$SSH_HOST "mkdir -p $RELEASE_DIR"
+          scp -r docker-compose.production.yml .docker .env .env.website $SSH_USER@$SSH_HOST:$RELEASE_DIR
 
       - name: Pull new images and restart
-        uses: appleboy/ssh-action@dce9d565de8d876c11d93fa4fe677c0285a66d78
-
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd releases/${{ github.sha }}
-            mv docker-compose.production.yml docker-compose.yml
-
-            docker compose pull
-            docker compose up -d
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          RELEASE_DIR: ~/releases/${{ github.sha }}
+        run: |
+          ssh $SSH_USER@$SSH_HOST "\
+            cd $RELEASE_DIR && \
+            mv docker-compose.production.yml docker-compose.yml && \
+            docker compose pull && \
+            docker compose up -d"
+          echo "Done!"
