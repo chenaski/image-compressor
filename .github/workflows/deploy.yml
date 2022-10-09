@@ -42,6 +42,7 @@ jobs:
         include:
           - app_name: website
           - app_name: backend-api
+          - app_name: image-processor
     steps:
       - name: Cancel previous runs
         uses: styfle/cancel-workflow-action@0.10.0
@@ -96,6 +97,10 @@ jobs:
           BACKEND_API_IMAGE_REPO: ${{ secrets.DOCKERHUB_USERNAME }}/image-compressor-backend-api
           BACKEND_API_IMAGE_TAG: ${{ github.ref_name }}-${{ github.sha }}
           BACKEND_API_PORT: ${{ secrets.BACKEND_API_PORT }}
+          IMAGE_PROCESSOR_IMAGE_REPO: ${{ secrets.DOCKERHUB_USERNAME }}/image-compressor-image-processor
+          IMAGE_PROCESSOR_IMAGE_TAG: ${{ github.ref_name }}-${{ github.sha }}
+          REDIS_STORE_PATH: ${{ secrets.REDIS_STORE_PATH }}
+          REDIS_URL: ${{ secrets.REDIS_URL }}
         run: |
           export DOMAIN="$DOMAIN"
           export COMPOSE_PROJECT_NAME="$COMPOSE_PROJECT_NAME"
@@ -108,6 +113,10 @@ jobs:
           export BACKEND_API_IMAGE_REPO="$BACKEND_API_IMAGE_REPO"
           export BACKEND_API_IMAGE_TAG="$BACKEND_API_IMAGE_TAG"
           export BACKEND_API_PORT="$BACKEND_API_PORT"
+          export IMAGE_PROCESSOR_IMAGE_REPO="$IMAGE_PROCESSOR_IMAGE_REPO"
+          export IMAGE_PROCESSOR_IMAGE_TAG="$IMAGE_PROCESSOR_IMAGE_TAG"
+          export REDIS_STORE_PATH="$REDIS_STORE_PATH"
+          export REDIS_URL="$REDIS_URL"
 
           envsubst < .env.production > .env
           echo "$WEBSITE_ENV_FILE" > $WEBSITE_ENV_FILE_PATH
@@ -125,7 +134,7 @@ jobs:
           target: releases/${{ github.sha }}
 
       - name: Pull new images and restart
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@dce9d565de8d876c11d93fa4fe677c0285a66d78
 
         with:
           host: ${{ secrets.SSH_HOST }}

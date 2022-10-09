@@ -32,6 +32,8 @@ services:
   image-processor:
     image: ${IMAGE_PROCESSOR_IMAGE_REPO}:${IMAGE_PROCESSOR_IMAGE_TAG}
     restart: always
+    environment:
+      REDIS_URL: ${REDIS_URL}
     depends_on:
       - redis
 
