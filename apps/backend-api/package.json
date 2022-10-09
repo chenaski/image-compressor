@@ -1,7 +1,7 @@
 {
   "name": "backend-api",
   "private": true,
-  "packageManager": "pnpm@7.11.0",
+  "packageManager": "pnpm@7.13.2",
   "volta": {
     "extends": "../../package.json"
   },
