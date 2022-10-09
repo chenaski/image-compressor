@@ -1,0 +1,38 @@
+{
+  "name": "image-processor",
+  "private": true,
+  "packageManager": "pnpm@7.13.2",
+  "volta": {
+    "extends": "../../package.json"
+  },
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "rm -rf dist && tsc",
+    "docker:build": "docker build -f Dockerfile -t image-processor ../..",
+    "start": "node dist",
+    "dev": "nodemon src/index.ts",
+    "format": "prettier -c .",
+    "format:fix": "prettier -w .",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix ."
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint --fix",
+      "prettier -w"
+    ],
+    "*.{json,md}": "prettier -w"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "redis": "^4.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18.7.14",
+    "eslint": "8.20.0",
+    "nodemon": "^2.0.19",
+    "prettier": "^2.7.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.8.4"
+  }
+}
