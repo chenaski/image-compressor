@@ -12,7 +12,7 @@ services:
       - ${CERTBOT_PATH}/www:/var/www/certbot:ro
 
   website:
-    image: ${WEBSITE_IMAGE_REPO}:${WEBSITE_IMAGE_TAG}
+    image: ${DOCKERHUB_USERNAME}/image-compressor-website:${IMAGE_TAG}
     restart: always
     env_file:
       - ${WEBSITE_ENV_FILE_PATH}
@@ -22,7 +22,7 @@ services:
       - ${WEBSITE_PORT}:${WEBSITE_PORT}
 
   backend-api:
-    image: ${BACKEND_API_IMAGE_REPO}:${BACKEND_API_IMAGE_TAG}
+    image: ${DOCKERHUB_USERNAME}/image-compressor-backend-api:${IMAGE_TAG}
     restart: always
     environment:
       PORT: ${BACKEND_API_PORT}
@@ -30,7 +30,7 @@ services:
       - ${BACKEND_API_PORT}:${BACKEND_API_PORT}
 
   image-processor:
-    image: ${IMAGE_PROCESSOR_IMAGE_REPO}:${IMAGE_PROCESSOR_IMAGE_TAG}
+    image: ${DOCKERHUB_USERNAME}/image-compressor-image-processor:${IMAGE_TAG}
     restart: always
     environment:
       REDIS_URL: ${REDIS_URL}
