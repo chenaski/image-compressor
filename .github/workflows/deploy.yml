@@ -127,9 +127,6 @@ jobs:
           envsubst < .env.production > .env
           echo "$WEBSITE_ENV_FILE" > $WEBSITE_ENV_FILE_PATH
 
-          envsubst '$DOMAIN:$WEBSITE_PORT' < .docker/nginx/conf/app.conf > tmp.conf
-          mv tmp.conf .docker/nginx/conf/app.conf
-
       - name: Setup SSH
         env:
           SSH_HOST: ${{ secrets.SSH_HOST }}
