@@ -28,17 +28,21 @@ importers:
 
   apps/backend-api:
     specifiers:
+      '@fastify/websocket': ^7.1.0
       '@types/node': ^18.7.14
+      '@types/ws': ^8.5.3
       compressor: workspace:*
       fastify: ^4.5.3
       nodemon: ^2.0.19
       ts-node: ^10.9.1
       typescript: ^4.8.3
     dependencies:
+      '@fastify/websocket': 7.1.0
       compressor: link:../../packages/compressor
       fastify: 4.5.3
     devDependencies:
       '@types/node': 18.7.14
+      '@types/ws': 8.5.3
       nodemon: 2.0.19
       ts-node: 10.9.1_5phtbhw2vjptp6mevgyr22345q
       typescript: 4.8.3
@@ -1510,6 +1514,16 @@ packages:
       fast-json-stringify: 5.2.0
     dev: false
 
+  /@fastify/websocket/7.1.0:
+    resolution: {integrity: sha512-aEHlymGnMOCY5pTSI6gOlLBX/5pIhQ485zyEx/m2+kITSa9vWtL08jbtAzbsaQBcqOz+bbVvxzerbHZdqQp2qQ==}
+    dependencies:
+      fastify-plugin: 4.2.1
+      ws: 8.9.0
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+    dev: false
+
   /@gar/promisify/1.1.3:
     resolution: {integrity: sha512-k2Ty1JcVojjJFwrg/ThKi2ujJ7XNLYaFGNB/bWT9wGR+oSMJHMa5w+CUq6p/pVrKeNNgA7pCqEcjSnHVoqJQFw==}
     dev: true
@@ -2533,6 +2547,12 @@ packages:
 
   /@types/unist/2.0.6:
     resolution: {integrity: sha512-PBjIUxZHOuj0R15/xuwJYjFi+KZdNFrehocChv4g5hu6aFroHue8m0lBP0POdK2nKzbw0cgV1mws8+V/JAcEkQ==}
+    dev: true
+
+  /@types/ws/8.5.3:
+    resolution: {integrity: sha512-6YOoWjruKj1uLf3INHH7D3qTXwFfEsg1kf3c0uDdSBJwfa/llkwIjrAGV7j7mVgGNbzTQ3HiHKKDXl6bJPD97w==}
+    dependencies:
+      '@types/node': 18.7.14
     dev: true
 
   /@types/yargs-parser/21.0.0:
@@ -3799,7 +3819,7 @@ packages:
       supports-color:
         optional: true
     dependencies:
-      ms: 2.1.2
+      ms: 2.1.3
     dev: true
 
   /debug/3.2.7_supports-color@5.5.0:
@@ -4957,6 +4977,10 @@ packages:
 
   /fast-uri/2.1.0:
     resolution: {integrity: sha512-qKRta6N7BWEFVlyonVY/V+BMLgFqktCUV0QjT259ekAIlbVrMaFnFLxJ4s/JPl4tou56S1BzPufI60bLe29fHA==}
+    dev: false
+
+  /fastify-plugin/4.2.1:
+    resolution: {integrity: sha512-dlGKiwLzRBKkEf5J5ho0uAD/Jdv8GQVUbriB3tAX3ehRUXE4gTV3lRd5inEg9li1aLzb0EGj8y2K4/8g1TN06g==}
     dev: false
 
   /fastify/4.5.3:
@@ -9823,6 +9847,19 @@ packages:
       utf-8-validate:
         optional: true
     dev: true
+
+  /ws/8.9.0:
+    resolution: {integrity: sha512-Ja7nszREasGaYUYCI2k4lCKIRTt+y7XuqVoHR44YpI49TtryyqbqvDMn5eqfW7e6HzTukDRIsXqzVHScqRcafg==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: ^5.0.2
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+    dev: false
 
   /xdm/2.1.0:
     resolution: {integrity: sha512-3LxxbxKcRogYY7cQSMy1tUuU1zKNK9YPqMT7/S0r7Cz2QpyF8O9yFySGD7caOZt+LWUOQioOIX+6ZzCoBCpcAA==}

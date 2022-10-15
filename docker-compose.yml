@@ -7,6 +7,8 @@ services:
       - apps/website/.env
     environment:
       PORT: ${WEBSITE_PORT}
+      API_HOST: backend-api
+      API_PORT: ${BACKEND_API_PORT}
     ports:
       - ${WEBSITE_PORT}:${WEBSITE_PORT}
 

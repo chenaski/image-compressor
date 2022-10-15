@@ -1,14 +1,35 @@
 import fastify from 'fastify';
 import { compress } from 'compressor';
+import websocket from '@fastify/websocket';
 
 const server = fastify();
 
-server.get('/ping', async (request, reply) => {
+server.register(websocket);
+
+server.get('/ping', async () => {
   return 'pong\n';
+});
+
+server.register(async function (server) {
+  server.get('/ws', { websocket: true }, (connection, req) => {
+    console.log(`[WS] Client(${req.ip}) connected `);
+
+    connection.socket.send('Hello from backend-api');
+
+    connection.socket.on('close', () => {
+      console.log(`[WS] Client(${req.ip}) disconnected`);
+    });
+    connection.socket.on('message', (message) => {
+      console.log(`[WS] Client(${req.ip}) sent message:\n${message}`);
+
+      setTimeout(() => connection.socket.send('Your message was handled'), 5000);
+    });
+  });
 });
 
 server.post('/compress', async (request, reply) => {
   reply.headers({ 'Access-Control-Allow-Origin': '*' });
+  console.log(`${request.ip} -> /compress`);
   return compress(request.body);
 });
 

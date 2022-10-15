@@ -11,6 +11,7 @@ import {
 import { Form, useActionData } from '@remix-run/react';
 import { getSession, SESSION_USER_ID } from '~/sessions';
 import { configServer } from '~/config.server';
+import { sendNewImagesInfo } from '~/api';
 
 type ActionData = { path: string }[];
 
@@ -28,7 +29,7 @@ export const action = async ({ request }: ActionArgs): Promise<ActionData> => {
   const formData = await unstable_parseMultipartFormData(request, uploadHandler);
 
   const images = formData.getAll('images');
-  return images.reduce((response, meta) => {
+  const response = images.reduce((response, meta) => {
     if (meta instanceof NodeOnDiskFile) {
       response.push({
         path: path.join(processedImagesDir, meta.name),
@@ -37,6 +38,10 @@ export const action = async ({ request }: ActionArgs): Promise<ActionData> => {
 
     return response;
   }, [] as ActionData);
+
+  await sendNewImagesInfo(response);
+
+  return response;
 };
 
 export default function Index() {
