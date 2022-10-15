@@ -3,3 +3,6 @@ node_modules
 
 # redis volume
 /data
+
+# local certs
+.docker/sertbot/conf/live/*

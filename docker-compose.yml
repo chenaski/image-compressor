@@ -1,4 +1,19 @@
 services:
+  webserver:
+    image: nginx:1-alpine
+    ports:
+      - '80:80'
+      - '443:443'
+    environment:
+      DOMAIN: 0.0.0.0
+      WEBSITE_PORT: ${WEBSITE_PORT}
+    volumes:
+      - .docker/nginx/templates:/etc/nginx/templates
+      - .docker/nginx/options-ssl-nginx.conf:/etc/nginx/options-ssl-nginx.conf
+      - .docker/nginx/ssl-dhparams.pem:/etc/nginx/ssl-dhparams.pem
+      - .docker/sertbot/conf:/etc/letsencrypt:ro
+      - .docker/sertbot/www:/var/www/certbot:ro
+
   website:
     build:
       context: .
