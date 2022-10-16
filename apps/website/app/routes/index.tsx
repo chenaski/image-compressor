@@ -17,7 +17,7 @@ type ActionData = { path: string }[];
 
 export const action = async ({ request }: ActionArgs): Promise<ActionData> => {
   const session = await getSession(request.headers.get('Cookie'));
-  const sourceImagesDir = path.join(configServer.sourceImagesDirPath, session.get(SESSION_USER_ID));
+  const sourceImagesDir = path.resolve(configServer.sourceImagesDirPath, session.get(SESSION_USER_ID));
   const uploadHandler = unstable_composeUploadHandlers(
     unstable_createFileUploadHandler({
       maxPartSize: 1024 * 1024 * 5,
