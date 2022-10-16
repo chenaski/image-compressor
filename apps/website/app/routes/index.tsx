@@ -18,7 +18,6 @@ type ActionData = { path: string }[];
 export const action = async ({ request }: ActionArgs): Promise<ActionData> => {
   const session = await getSession(request.headers.get('Cookie'));
   const sourceImagesDir = path.join(configServer.sourceImagesDirPath, session.get(SESSION_USER_ID));
-  const processedImagesDir = path.join(configServer.processedImagesDirPath, session.get(SESSION_USER_ID));
   const uploadHandler = unstable_composeUploadHandlers(
     unstable_createFileUploadHandler({
       maxPartSize: 1024 * 1024 * 5,
@@ -32,7 +31,7 @@ export const action = async ({ request }: ActionArgs): Promise<ActionData> => {
   const response = images.reduce((response, meta) => {
     if (meta instanceof NodeOnDiskFile) {
       response.push({
-        path: path.join(processedImagesDir, meta.name),
+        path: path.join(sourceImagesDir, meta.name),
       });
     }
 
