@@ -1,10 +1,20 @@
 import fastify from 'fastify';
-import { compress } from 'compressor';
 import websocket from '@fastify/websocket';
+import redis from '@fastify/redis';
+import dotenv from 'dotenv';
+import path from 'path';
+import { compressRoutes } from './routes/compress';
+
+dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '../.env.local'), override: true });
 
 const server = fastify();
 
 server.register(websocket);
+server.register(redis, {
+  url: process.env.REDIS_URL || undefined,
+});
+server.register(compressRoutes);
 
 server.get('/ping', async () => {
   return 'pong\n';
@@ -25,12 +35,6 @@ server.register(async function (server) {
       setTimeout(() => connection.socket.send('Your message was handled'), 5000);
     });
   });
-});
-
-server.post('/compress', async (request, reply) => {
-  reply.headers({ 'Access-Control-Allow-Origin': '*' });
-  console.log(`${request.ip} -> /compress`);
-  return compress(request.body);
 });
 
 const port = process.env.PORT ? parseInt(process.env.PORT) : 4000;

@@ -33,6 +33,7 @@ services:
       dockerfile: apps/backend-api/Dockerfile
     environment:
       PORT: ${BACKEND_API_PORT}
+      REDIS_URL: ${REDIS_URL}
     ports:
       - ${BACKEND_API_PORT}:${BACKEND_API_PORT}
 
