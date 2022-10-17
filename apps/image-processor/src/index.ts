@@ -1,46 +1,57 @@
-import { createClient } from 'redis';
-import dotenv from 'dotenv';
-import path from 'path';
+import { EventEmitter } from 'events';
+import { createRedisConnection } from './create-redis-connection';
+import { RedisClient } from '../global';
 
-dotenv.config();
-dotenv.config({ path: path.resolve(__dirname, '../.env.local'), override: true });
+const REDIS_QUEUE_ID = 'images-queue';
+const MESSAGE_IN_EVENT = 'message-in';
+const MESSAGE_OUT_EVENT = 'message-out';
+const POLLING_EVENT = 'polling';
 
-async function main() {
-  console.log({ REDIS_URL: process.env.REDIS_URL });
-  const client = createClient({
-    url: process.env.REDIS_URL || undefined,
-  });
+const eventEmitter = new EventEmitter();
 
-  client.on('error', (err) => console.log('Redis Client Error', err));
+async function messageIn({ message }: { message: string }): Promise<void> {
+  const parsedMessage = JSON.parse(message);
 
-  await client.connect();
+  console.log(`[${new Date().toISOString()}] Take message:\n${parsedMessage}`);
 
-  const queueId = 'images-queue';
+  // process image
+  await new Promise((res) => setTimeout(res, 5000));
 
-  const hasMessage = async (): Promise<boolean> => {
-    const queueLength = await client.lLen(queueId);
-    console.log(new Date(), { queueLength });
-    return queueLength > 0;
-  };
-  const processMessage = async (): Promise<void> => {
-    const nextMessage = await client.lPop(queueId);
-    console.log(new Date(), { nextMessage });
-    if (await hasMessage()) {
-      return processMessage();
-    } else {
-      return startPolling();
-    }
-  };
-  const startPolling = async (): Promise<void> => {
-    const intervalId = setInterval(async () => {
-      if (await hasMessage()) {
-        clearInterval(intervalId);
-        return processMessage();
-      }
-    }, 1000);
-  };
-
-  return startPolling();
+  eventEmitter.emit(MESSAGE_OUT_EVENT);
 }
 
-main();
+async function messageOut(): Promise<void> {
+  eventEmitter.emit(POLLING_EVENT);
+}
+
+async function hasMessage(redis: RedisClient): Promise<boolean> {
+  const queueLength = await redis.lLen(REDIS_QUEUE_ID);
+  return queueLength > 0;
+}
+
+async function startPolling(redis: RedisClient): Promise<void> {
+  console.log(`[${new Date().toISOString()}] Wait for new massages...`);
+
+  const intervalId = setInterval(async () => {
+    if (await hasMessage(redis)) {
+      clearInterval(intervalId);
+      const nextMessage = await redis.lPop(REDIS_QUEUE_ID);
+      if (!nextMessage) return;
+      return eventEmitter.emit(MESSAGE_IN_EVENT, { message: nextMessage });
+    }
+  }, 1000);
+}
+
+async function main() {
+  const redis = await createRedisConnection();
+
+  eventEmitter.on(MESSAGE_IN_EVENT, messageIn);
+  eventEmitter.on(MESSAGE_OUT_EVENT, messageOut);
+  eventEmitter.on(POLLING_EVENT, startPolling.bind(null, redis));
+
+  eventEmitter.emit(POLLING_EVENT);
+}
+
+(async () => {
+  await main();
+})();
