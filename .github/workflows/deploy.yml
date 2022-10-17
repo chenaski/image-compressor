@@ -2,7 +2,8 @@ name: Deploy
 
 on:
   push:
-  pull_request:
+    branches:
+      - main
 
 jobs:
   lint:
@@ -39,15 +40,20 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        include:
-          - app_name: website
-          - app_name: backend-api
+        app_name:
+          - website
+          - backend-api
+          - image-processor
     steps:
       - name: Cancel previous runs
         uses: styfle/cancel-workflow-action@0.10.0
 
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Set env
+        run: |
+          echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -61,15 +67,15 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v3
         env:
-          repository: ${{ secrets.DOCKERHUB_USERNAME }}/image-compressor-${{ matrix.app_name }}
-          tags: ${{ github.ref_name }}-${{ github.sha }}
-          cache_tag: buildcache
+          REPOSITORY: ${{ secrets.DOCKERHUB_USERNAME }}/image-compressor-${{ matrix.app_name }}
+          TAGS: ${{ github.ref_name }}-${{ env.GITHUB_SHA_SHORT }}
+          CACHE_TAG: buildcache
         with:
           file: apps/${{ matrix.app_name }}/Dockerfile
           push: true
-          tags: ${{ env.repository }}:${{ env.tags }},${{ env.repository }}:latest
-          cache-from: type=registry,ref=${{ env.repository }}:${{ env.cache_tag }}
-          cache-to: type=registry,ref=${{ env.repository }}:${{ env.cache_tag }},mode=max
+          tags: ${{ env.REPOSITORY }}:${{ env.TAGS }},${{ env.REPOSITORY }}:latest
+          cache-from: type=registry,ref=${{ env.REPOSITORY }}:${{ env.CACHE_TAG }}
+          cache-to: type=registry,ref=${{ env.REPOSITORY }}:${{ env.CACHE_TAG }},mode=max
 
   deploy:
     name: Deploy
@@ -83,57 +89,75 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Set env
+        run: |
+          echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV
+
       - name: Create production .env files
         env:
           DOMAIN: ${{ secrets.DOMAIN }}
           COMPOSE_PROJECT_NAME: image-compressor
           CERTBOT_PATH: ${{ secrets.CERTBOT_PATH }}
-          WEBSITE_IMAGE_REPO: ${{ secrets.DOCKERHUB_USERNAME }}/image-compressor-website
-          WEBSITE_IMAGE_TAG: ${{ github.ref_name }}-${{ github.sha }}
+
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          IMAGE_TAG: ${{ github.ref_name }}-${{ env.GITHUB_SHA_SHORT }}
+
+          SOURCE_IMAGES_PATH: ${{ secrets.SOURCE_IMAGES_PATH }}
+          PROCESSED_IMAGES_PATH: ${{ secrets.PROCESSED_IMAGES_PATH }}
+
           WEBSITE_PORT: ${{ secrets.WEBSITE_PORT }}
           WEBSITE_ENV_FILE: ${{ secrets.WEBSITE_ENV_FILE }}
           WEBSITE_ENV_FILE_PATH: '.env.website'
-          BACKEND_API_IMAGE_REPO: ${{ secrets.DOCKERHUB_USERNAME }}/image-compressor-backend-api
-          BACKEND_API_IMAGE_TAG: ${{ github.ref_name }}-${{ github.sha }}
+
           BACKEND_API_PORT: ${{ secrets.BACKEND_API_PORT }}
+
+          REDIS_STORE_PATH: ${{ secrets.REDIS_STORE_PATH }}
+          REDIS_URL: ${{ secrets.REDIS_URL }}
         run: |
           export DOMAIN="$DOMAIN"
           export COMPOSE_PROJECT_NAME="$COMPOSE_PROJECT_NAME"
           export CERTBOT_PATH="$CERTBOT_PATH"
-          export WEBSITE_IMAGE_REPO="$WEBSITE_IMAGE_REPO"
-          export WEBSITE_IMAGE_TAG="$WEBSITE_IMAGE_TAG"
+          export DOCKERHUB_USERNAME="$DOCKERHUB_USERNAME"
+          export IMAGE_TAG="$IMAGE_TAG"
+          export SOURCE_IMAGES_PATH="$SOURCE_IMAGES_PATH"
+          export PROCESSED_IMAGES_PATH="$PROCESSED_IMAGES_PATH"
           export WEBSITE_PORT="$WEBSITE_PORT"
           export WEBSITE_ENV_FILE="$WEBSITE_ENV_FILE"
           export WEBSITE_ENV_FILE_PATH="$WEBSITE_ENV_FILE_PATH"
-          export BACKEND_API_IMAGE_REPO="$BACKEND_API_IMAGE_REPO"
-          export BACKEND_API_IMAGE_TAG="$BACKEND_API_IMAGE_TAG"
           export BACKEND_API_PORT="$BACKEND_API_PORT"
+          export REDIS_STORE_PATH="$REDIS_STORE_PATH"
+          export REDIS_URL="$REDIS_URL"
 
           envsubst < .env.production > .env
           echo "$WEBSITE_ENV_FILE" > $WEBSITE_ENV_FILE_PATH
 
-          envsubst '$DOMAIN:$WEBSITE_PORT' < .docker/nginx/conf/app.conf > tmp.conf
-          mv tmp.conf .docker/nginx/conf/app.conf
+      - name: Setup SSH
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" | tr -d "\r" > ~/.ssh/id_ecdsa
+          chmod 600 ~/.ssh/id_ecdsa
+          ssh-keyscan -t ecdsa -H $SSH_HOST >> ~/.ssh/known_hosts
 
-      - name: Setup release dir
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: docker-compose.production.yml,.docker,.env,.env.website
-          target: releases/${{ github.sha }}
+      - name: Prepare new release directory
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          RELEASE_DIR: ~/releases/${{ env.GITHUB_SHA_SHORT }}
+        run: |
+          ssh $SSH_USER@$SSH_HOST "mkdir -p $RELEASE_DIR"
+          scp -r docker-compose.production.yml .docker .env .env.website $SSH_USER@$SSH_HOST:$RELEASE_DIR
 
       - name: Pull new images and restart
-        uses: appleboy/ssh-action@master
-
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd releases/${{ github.sha }}
-            mv docker-compose.production.yml docker-compose.yml
-
-            docker compose pull
-            docker compose up -d
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          RELEASE_DIR: ~/releases/${{ env.GITHUB_SHA_SHORT }}
+        run: |
+          ssh $SSH_USER@$SSH_HOST "\
+            cd $RELEASE_DIR && \
+            mv docker-compose.production.yml docker-compose.yml && \
+            docker compose pull && \
+            docker compose up -d"

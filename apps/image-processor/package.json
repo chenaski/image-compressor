@@ -1,5 +1,5 @@
 {
-  "name": "compressor",
+  "name": "image-processor",
   "private": true,
   "packageManager": "pnpm@7.13.2",
   "volta": {
@@ -8,6 +8,8 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "rm -rf dist && tsc",
+    "docker:build": "docker build -f Dockerfile -t image-processor ../..",
+    "start": "node dist",
     "dev": "nodemon src/index.ts",
     "format": "prettier -c .",
     "format:fix": "prettier -w .",
@@ -21,10 +23,16 @@
     ],
     "*.{json,md}": "prettier -w"
   },
+  "dependencies": {
+    "redis": "^4.3.1"
+  },
   "devDependencies": {
     "@types/node": "^18.7.14",
+    "dotenv": "^16.0.3",
+    "eslint": "8.20.0",
     "nodemon": "^2.0.19",
+    "prettier": "^2.7.1",
     "ts-node": "^10.9.1",
-    "typescript": "^4.8.3"
+    "typescript": "^4.8.4"
   }
 }

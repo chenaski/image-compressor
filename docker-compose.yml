@@ -1,4 +1,19 @@
 services:
+  webserver:
+    image: nginx:1-alpine
+    ports:
+      - '80:80'
+      - '443:443'
+    environment:
+      DOMAIN: 0.0.0.0
+      WEBSITE_PORT: ${WEBSITE_PORT}
+    volumes:
+      - .docker/nginx/templates:/etc/nginx/templates
+      - .docker/nginx/options-ssl-nginx.conf:/etc/nginx/options-ssl-nginx.conf
+      - .docker/nginx/ssl-dhparams.pem:/etc/nginx/ssl-dhparams.pem
+      - .docker/sertbot/conf:/etc/letsencrypt:ro
+      - .docker/sertbot/www:/var/www/certbot:ro
+
   website:
     build:
       context: .
@@ -7,8 +22,15 @@ services:
       - apps/website/.env
     environment:
       PORT: ${WEBSITE_PORT}
+      API_HOST: backend-api
+      API_PORT: ${BACKEND_API_PORT}
+      SOURCE_IMAGES_PATH: /opt/data/source
+      PROCESSED_IMAGES_PATH: /opt/data/processed
     ports:
       - ${WEBSITE_PORT}:${WEBSITE_PORT}
+    volumes:
+      - ${SOURCE_IMAGES_PATH}:/opt/data/source
+      - ${PROCESSED_IMAGES_PATH}:/opt/data/processed
 
   backend-api:
     build:
@@ -16,5 +38,28 @@ services:
       dockerfile: apps/backend-api/Dockerfile
     environment:
       PORT: ${BACKEND_API_PORT}
+      REDIS_URL: ${REDIS_URL}
     ports:
       - ${BACKEND_API_PORT}:${BACKEND_API_PORT}
+
+  image-processor:
+    build:
+      context: .
+      dockerfile: apps/image-processor/Dockerfile
+    environment:
+      REDIS_URL: ${REDIS_URL}
+      SOURCE_IMAGES_PATH: /opt/data/source
+      PROCESSED_IMAGES_PATH: /opt/data/processed
+    depends_on:
+      - redis
+    volumes:
+      - ${SOURCE_IMAGES_PATH}:/opt/data/source
+      - ${PROCESSED_IMAGES_PATH}:/opt/data/processed
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - ${REDIS_PORT}:6379
+    volumes:
+      - ./data:/data
+    command: redis-server --save 60 1 --loglevel warning

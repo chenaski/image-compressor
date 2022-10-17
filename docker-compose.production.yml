@@ -1,30 +1,61 @@
 services:
   webserver:
     image: nginx:1-alpine
+    environment:
+      DOMAIN: ${DOMAIN}
+      WEBSITE_PORT: ${WEBSITE_PORT}
     ports:
       - '80:80'
       - '443:443'
     volumes:
-      - .docker/nginx/conf:/etc/nginx/conf.d
+      - .docker/nginx/templates:/etc/nginx/templates
       - .docker/nginx/options-ssl-nginx.conf:/etc/nginx/options-ssl-nginx.conf
       - .docker/nginx/ssl-dhparams.pem:/etc/nginx/ssl-dhparams.pem
       - ${CERTBOT_PATH}/conf:/etc/letsencrypt:ro
       - ${CERTBOT_PATH}/www:/var/www/certbot:ro
 
   website:
-    image: ${WEBSITE_IMAGE_REPO}:${WEBSITE_IMAGE_TAG}
+    image: ${DOCKERHUB_USERNAME}/image-compressor-website:${IMAGE_TAG}
     restart: always
     env_file:
       - ${WEBSITE_ENV_FILE_PATH}
     environment:
       PORT: ${WEBSITE_PORT}
+      API_HOST: backend-api
+      API_PORT: ${BACKEND_API_PORT}
+      SOURCE_IMAGES_PATH: /opt/data/source
+      PROCESSED_IMAGES_PATH: /opt/data/processed
     ports:
       - ${WEBSITE_PORT}:${WEBSITE_PORT}
+    volumes:
+      - ${SOURCE_IMAGES_PATH}:/opt/data/source
+      - ${PROCESSED_IMAGES_PATH}:/opt/data/processed
 
   backend-api:
-    image: ${BACKEND_API_IMAGE_REPO}:${BACKEND_API_IMAGE_TAG}
+    image: ${DOCKERHUB_USERNAME}/image-compressor-backend-api:${IMAGE_TAG}
     restart: always
     environment:
       PORT: ${BACKEND_API_PORT}
+      REDIS_URL: ${REDIS_URL}
     ports:
       - ${BACKEND_API_PORT}:${BACKEND_API_PORT}
+
+  image-processor:
+    image: ${DOCKERHUB_USERNAME}/image-compressor-image-processor:${IMAGE_TAG}
+    restart: always
+    environment:
+      REDIS_URL: ${REDIS_URL}
+      SOURCE_IMAGES_PATH: /opt/data/source
+      PROCESSED_IMAGES_PATH: /opt/data/processed
+    depends_on:
+      - redis
+    volumes:
+      - ${SOURCE_IMAGES_PATH}:/opt/data/source
+      - ${PROCESSED_IMAGES_PATH}:/opt/data/processed
+
+  redis:
+    image: redis:7-alpine
+    restart: always
+    volumes:
+      - ${REDIS_STORE_PATH}:/data
+    command: redis-server --save 20 1 --loglevel warning

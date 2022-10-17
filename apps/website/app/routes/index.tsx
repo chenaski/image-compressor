@@ -11,13 +11,13 @@ import {
 import { Form, useActionData } from '@remix-run/react';
 import { getSession, SESSION_USER_ID } from '~/sessions';
 import { configServer } from '~/config.server';
+import { sendNewImagesInfo } from '~/api';
 
 type ActionData = { path: string }[];
 
 export const action = async ({ request }: ActionArgs): Promise<ActionData> => {
   const session = await getSession(request.headers.get('Cookie'));
-  const sourceImagesDir = path.join(configServer.sourceImagesDirPath, session.get(SESSION_USER_ID));
-  const processedImagesDir = path.join(configServer.processedImagesDirPath, session.get(SESSION_USER_ID));
+  const sourceImagesDir = path.resolve(configServer.sourceImagesDirPath, session.get(SESSION_USER_ID));
   const uploadHandler = unstable_composeUploadHandlers(
     unstable_createFileUploadHandler({
       maxPartSize: 1024 * 1024 * 5,
@@ -28,15 +28,19 @@ export const action = async ({ request }: ActionArgs): Promise<ActionData> => {
   const formData = await unstable_parseMultipartFormData(request, uploadHandler);
 
   const images = formData.getAll('images');
-  return images.reduce((response, meta) => {
+  const response = images.reduce((response, meta) => {
     if (meta instanceof NodeOnDiskFile) {
       response.push({
-        path: path.join(processedImagesDir, meta.name),
+        path: path.join(sourceImagesDir, meta.name),
       });
     }
 
     return response;
   }, [] as ActionData);
+
+  await sendNewImagesInfo(response);
+
+  return response;
 };
 
 export default function Index() {

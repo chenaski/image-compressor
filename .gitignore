@@ -1,2 +1,8 @@
 node_modules
 .env.local
+
+# redis volume
+/data
+
+# local certs
+.docker/sertbot/conf/live/*

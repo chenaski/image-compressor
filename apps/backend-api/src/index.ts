@@ -1,22 +1,34 @@
 import fastify from 'fastify';
-import { compress } from 'compressor';
+import websocket from '@fastify/websocket';
+import redis from '@fastify/redis';
 
-const server = fastify();
+import { compressRoutes } from './routes/compress';
+import { pingRoutes } from './routes/ping';
+import { wsRoutes } from './routes/ws';
+import { getConfig } from './config';
 
-server.get('/ping', async (request, reply) => {
-  return 'pong\n';
-});
+async function startServer() {
+  const server = fastify();
+  const config = await getConfig();
 
-server.post('/compress', async (request, reply) => {
-  reply.headers({ 'Access-Control-Allow-Origin': '*' });
-  return compress(request.body);
-});
+  server.register(websocket);
+  server.register(redis, {
+    url: process.env.REDIS_URL || undefined,
+  });
 
-const port = process.env.PORT ? parseInt(process.env.PORT) : 4000;
-server.listen({ port, host: '0.0.0.0' }, (err, address) => {
-  if (err) {
-    console.error(err);
-    process.exit(1);
-  }
-  console.log(`Server listening at ${address}`);
-});
+  server.register(pingRoutes);
+  server.register(compressRoutes);
+  server.register(wsRoutes);
+
+  server.listen({ port: config.port, host: '0.0.0.0' }, (err, address) => {
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    }
+    console.log(`Server listening at ${address}`);
+  });
+}
+
+(async () => {
+  await startServer();
+})();
