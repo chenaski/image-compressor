@@ -24,8 +24,13 @@ services:
       PORT: ${WEBSITE_PORT}
       API_HOST: backend-api
       API_PORT: ${BACKEND_API_PORT}
+      SOURCE_IMAGES_PATH: /opt/data/source
+      PROCESSED_IMAGES_PATH: /opt/data/processed
     ports:
       - ${WEBSITE_PORT}:${WEBSITE_PORT}
+    volumes:
+      - ${SOURCE_IMAGES_PATH}:/opt/data/source
+      - ${PROCESSED_IMAGES_PATH}:/opt/data/processed
 
   backend-api:
     build:
@@ -43,8 +48,13 @@ services:
       dockerfile: apps/image-processor/Dockerfile
     environment:
       REDIS_URL: ${REDIS_URL}
+      SOURCE_IMAGES_PATH: /opt/data/source
+      PROCESSED_IMAGES_PATH: /opt/data/processed
     depends_on:
       - redis
+    volumes:
+      - ${SOURCE_IMAGES_PATH}:/opt/data/source
+      - ${PROCESSED_IMAGES_PATH}:/opt/data/processed
 
   redis:
     image: redis:7-alpine
