@@ -3,7 +3,10 @@ import websocket from '@fastify/websocket';
 import redis from '@fastify/redis';
 import dotenv from 'dotenv';
 import path from 'path';
+
 import { compressRoutes } from './routes/compress';
+import { pingRoutes } from './routes/ping';
+import { wsRoutes } from './routes/ws';
 
 dotenv.config();
 dotenv.config({ path: path.resolve(__dirname, '../.env.local'), override: true });
@@ -14,28 +17,10 @@ server.register(websocket);
 server.register(redis, {
   url: process.env.REDIS_URL || undefined,
 });
+
+server.register(pingRoutes);
 server.register(compressRoutes);
-
-server.get('/ping', async () => {
-  return 'pong\n';
-});
-
-server.register(async function (server) {
-  server.get('/ws', { websocket: true }, (connection, req) => {
-    console.log(`[WS] Client(${req.ip}) connected `);
-
-    connection.socket.send('Hello from backend-api');
-
-    connection.socket.on('close', () => {
-      console.log(`[WS] Client(${req.ip}) disconnected`);
-    });
-    connection.socket.on('message', (message) => {
-      console.log(`[WS] Client(${req.ip}) sent message:\n${message}`);
-
-      setTimeout(() => connection.socket.send('Your message was handled'), 5000);
-    });
-  });
-});
+server.register(wsRoutes);
 
 const port = process.env.PORT ? parseInt(process.env.PORT) : 4000;
 server.listen({ port, host: '0.0.0.0' }, (err, address) => {
