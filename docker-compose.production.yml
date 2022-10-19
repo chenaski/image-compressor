@@ -4,6 +4,7 @@ services:
     environment:
       DOMAIN: ${DOMAIN}
       WEBSITE_PORT: ${WEBSITE_PORT}
+      API_PORT: ${BACKEND_API_PORT}
     ports:
       - '80:80'
       - '443:443'

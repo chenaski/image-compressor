@@ -1,9 +1,7 @@
 import { configServer } from '~/config.server';
 
-const BASE_URL = `http://${configServer.apiHost}:${configServer.apiPort}`;
-
 export async function send(path: string, data: Record<string, unknown> | unknown[]) {
-  const url = `${BASE_URL}${path}`;
+  const url = `${configServer.apiBaseUrl}${path}`;
 
   console.log(`Send images data to ${url}`);
 

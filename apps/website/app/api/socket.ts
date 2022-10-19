@@ -1,10 +1,9 @@
 import { configClient } from '~/config.client';
 
-const BASE_URL = `ws://${configClient.apiHost}:${configClient.apiPort}`;
 let ws: WebSocket | null = null;
 
 export async function connect(): Promise<void> {
-  const url = `${BASE_URL}/ws`;
+  const url = `${configClient.apiWsBaseUrl}/ws`;
 
   if (ws) return;
 

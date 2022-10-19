@@ -7,6 +7,7 @@ services:
     environment:
       DOMAIN: 0.0.0.0
       WEBSITE_PORT: ${WEBSITE_PORT}
+      API_PORT: ${BACKEND_API_PORT}
     volumes:
       - .docker/nginx/templates:/etc/nginx/templates
       - .docker/nginx/options-ssl-nginx.conf:/etc/nginx/options-ssl-nginx.conf

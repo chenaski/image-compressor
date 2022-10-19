@@ -1,7 +1,7 @@
 import type { MetaFunction, LinksFunction } from '@remix-run/node';
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from '@remix-run/react';
 import styles from './tailwind.css';
-import type { configClient } from '~/config.client';
+import type { ExpectedVars } from '~/config.client';
 import { configServer } from '~/config.server';
 
 export const meta: MetaFunction = () => ({
@@ -13,7 +13,8 @@ export const meta: MetaFunction = () => ({
 export const links: LinksFunction = () => [{ rel: 'stylesheet', href: styles }];
 
 export async function loader() {
-  const env: Omit<typeof configClient, 'apiHost'> = {
+  const env: ExpectedVars = {
+    isProd: configServer.isProd,
     apiPort: configServer.apiPort,
   };
   return {
