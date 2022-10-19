@@ -26,6 +26,6 @@ export const getConfig = async () => {
 
   return {
     redisUrl: env['REDIS_URL'],
-    processedImagesDirPath: env['PROCESSED_IMAGES_PATH'],
+    processedImagesDirPath: path.resolve(env['PROCESSED_IMAGES_PATH'] || ''),
   };
 };

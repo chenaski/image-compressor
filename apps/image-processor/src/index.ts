@@ -1,6 +1,9 @@
 import { EventEmitter } from 'events';
-import { createRedisConnection } from './create-redis-connection';
+import fs from 'fs/promises';
+import path from 'path';
 import { RedisClient } from '../global';
+import { createRedisConnection } from './create-redis-connection';
+import { getConfig } from './config';
 
 const REDIS_QUEUE_ID = 'images-queue';
 const MESSAGE_IN_EVENT = 'message-in';
@@ -12,14 +15,28 @@ const REDIS_PUB_SUB_ID = 'finished';
 const eventEmitter = new EventEmitter();
 
 async function messageIn({ message }: { message: string }): Promise<void> {
-  const parsedMessage = JSON.parse(message);
+  const config = await getConfig();
+  const parsedMessages: { path: string }[] = JSON.parse(message);
 
-  console.log(`[${new Date().toISOString()}] Take message:\n${parsedMessage}`);
+  console.log(`[${new Date().toISOString()}] Take message:\n${parsedMessages}`);
+
+  const processedMassagesPaths = [];
 
   // process image
+  for (const parsedMessage of parsedMessages) {
+    const fileName = path.basename(parsedMessage.path);
+    const userDir = path.basename(path.resolve(parsedMessage.path, '..'));
+    const destPath = path.join(config.processedImagesDirPath, userDir, fileName);
+
+    console.log(`[${new Date().toISOString()}] Save image to ${destPath}`);
+
+    await fs.cp(parsedMessage.path, destPath);
+    processedMassagesPaths.push({ path: destPath });
+  }
+
   await new Promise((res) => setTimeout(res, 5000));
 
-  eventEmitter.emit(MESSAGE_OUT_EVENT, { message });
+  eventEmitter.emit(MESSAGE_OUT_EVENT, { message: JSON.stringify(processedMassagesPaths) });
 }
 
 async function messageOut(redis: RedisClient, { message }: { message: string }): Promise<void> {

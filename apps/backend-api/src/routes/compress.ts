@@ -10,7 +10,7 @@ export async function compressRoutes(server: FastifyInstance) {
     const body = request.body;
     console.log(`${request.ip} -> /compress\n${body}`);
 
-    await server.redis.common.rpush(REDIS_QUEUE_ID, JSON.stringify(body));
+    await server.redis.common.rpush(REDIS_QUEUE_ID, body as string);
 
     return compress(request.body);
   });
