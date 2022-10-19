@@ -1,6 +1,8 @@
 import { FastifyInstance } from 'fastify';
 import { WebSocket } from 'ws';
 
+const REDIS_PUB_SUB_ID = 'finished';
+
 const isAlive = (socket: WebSocket & { isAlive?: boolean }): boolean => {
   if (socket.isAlive === undefined) return true;
   return socket.isAlive;
@@ -18,6 +20,17 @@ export async function wsRoutes(server: FastifyInstance) {
       socket.ping();
     });
   }, 30000);
+
+  server.redis.broadcast.subscribe(REDIS_PUB_SUB_ID, (err) => {
+    if (err) console.error(`[REDIS] Failed to subscribe: ${err.message}`);
+  });
+  server.redis.broadcast.on('message', (_, message) => {
+    console.log(`[REDIS] Message:\n${message}`);
+
+    server.websocketServer.clients.forEach((socket) => {
+      socket.send(message);
+    });
+  });
 
   server.register(async function (server) {
     server.get('/ws', { websocket: true }, (connection, req) => {

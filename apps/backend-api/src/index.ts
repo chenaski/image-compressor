@@ -12,9 +12,15 @@ async function startServer() {
   const config = await getConfig();
 
   server.register(websocket);
-  server.register(redis, {
-    url: process.env.REDIS_URL || undefined,
-  });
+  server
+    .register(redis, {
+      url: config.redisUrl,
+      namespace: 'common',
+    })
+    .register(redis, {
+      url: config.redisUrl,
+      namespace: 'broadcast',
+    });
 
   server.register(pingRoutes);
   server.register(compressRoutes);

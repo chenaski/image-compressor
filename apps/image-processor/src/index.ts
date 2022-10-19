@@ -7,6 +7,8 @@ const MESSAGE_IN_EVENT = 'message-in';
 const MESSAGE_OUT_EVENT = 'message-out';
 const POLLING_EVENT = 'polling';
 
+const REDIS_PUB_SUB_ID = 'finished';
+
 const eventEmitter = new EventEmitter();
 
 async function messageIn({ message }: { message: string }): Promise<void> {
@@ -17,11 +19,14 @@ async function messageIn({ message }: { message: string }): Promise<void> {
   // process image
   await new Promise((res) => setTimeout(res, 5000));
 
-  eventEmitter.emit(MESSAGE_OUT_EVENT);
+  eventEmitter.emit(MESSAGE_OUT_EVENT, { message });
 }
 
-async function messageOut(): Promise<void> {
+async function messageOut(redis: RedisClient, { message }: { message: string }): Promise<void> {
   eventEmitter.emit(POLLING_EVENT);
+
+  console.log(`[${new Date().toISOString()}] Send message about completion`);
+  redis.publish(REDIS_PUB_SUB_ID, message);
 }
 
 async function hasMessage(redis: RedisClient): Promise<boolean> {
@@ -46,8 +51,8 @@ async function main() {
   const redis = await createRedisConnection();
 
   eventEmitter.on(MESSAGE_IN_EVENT, messageIn);
-  eventEmitter.on(MESSAGE_OUT_EVENT, messageOut);
-  eventEmitter.on(POLLING_EVENT, startPolling.bind(null, redis));
+  eventEmitter.on(MESSAGE_OUT_EVENT, (event) => messageOut(redis, event));
+  eventEmitter.on(POLLING_EVENT, startPolling.bind(undefined, redis));
 
   eventEmitter.emit(POLLING_EVENT);
 }
