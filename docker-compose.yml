@@ -19,12 +19,11 @@ services:
     build:
       context: .
       dockerfile: apps/website/Dockerfile
-    env_file:
-      - apps/website/.env
     environment:
       PORT: ${WEBSITE_PORT}
       API_HOST: backend-api
       API_PORT: ${BACKEND_API_PORT}
+      SESSION_COOKIE_SECRET: ${SESSION_COOKIE_SECRET}
       SOURCE_IMAGES_PATH: /opt/data/source
       PROCESSED_IMAGES_PATH: /opt/data/processed
     ports:
@@ -40,6 +39,7 @@ services:
     environment:
       PORT: ${BACKEND_API_PORT}
       REDIS_URL: ${REDIS_URL}
+      SESSION_COOKIE_SECRET: ${SESSION_COOKIE_SECRET}
     ports:
       - ${BACKEND_API_PORT}:${BACKEND_API_PORT}
 

@@ -102,13 +102,12 @@ jobs:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           IMAGE_TAG: ${{ github.ref_name }}-${{ env.GITHUB_SHA_SHORT }}
 
+          SESSION_COOKIE_SECRET: ${{ secrets.SESSION_COOKIE_SECRET }}
+
           SOURCE_IMAGES_PATH: ${{ secrets.SOURCE_IMAGES_PATH }}
           PROCESSED_IMAGES_PATH: ${{ secrets.PROCESSED_IMAGES_PATH }}
 
           WEBSITE_PORT: ${{ secrets.WEBSITE_PORT }}
-          WEBSITE_ENV_FILE: ${{ secrets.WEBSITE_ENV_FILE }}
-          WEBSITE_ENV_FILE_PATH: '.env.website'
-
           BACKEND_API_PORT: ${{ secrets.BACKEND_API_PORT }}
 
           REDIS_STORE_PATH: ${{ secrets.REDIS_STORE_PATH }}
@@ -119,17 +118,15 @@ jobs:
           export CERTBOT_PATH="$CERTBOT_PATH"
           export DOCKERHUB_USERNAME="$DOCKERHUB_USERNAME"
           export IMAGE_TAG="$IMAGE_TAG"
+          export SESSION_COOKIE_SECRET="$SESSION_COOKIE_SECRET"
           export SOURCE_IMAGES_PATH="$SOURCE_IMAGES_PATH"
           export PROCESSED_IMAGES_PATH="$PROCESSED_IMAGES_PATH"
           export WEBSITE_PORT="$WEBSITE_PORT"
-          export WEBSITE_ENV_FILE="$WEBSITE_ENV_FILE"
-          export WEBSITE_ENV_FILE_PATH="$WEBSITE_ENV_FILE_PATH"
           export BACKEND_API_PORT="$BACKEND_API_PORT"
           export REDIS_STORE_PATH="$REDIS_STORE_PATH"
           export REDIS_URL="$REDIS_URL"
 
           envsubst < .env.production > .env
-          echo "$WEBSITE_ENV_FILE" > $WEBSITE_ENV_FILE_PATH
 
       - name: Setup SSH
         env:
