@@ -25,7 +25,6 @@ services:
       API_PORT: ${BACKEND_API_PORT}
       SESSION_COOKIE_SECRET: ${SESSION_COOKIE_SECRET}
       SOURCE_IMAGES_PATH: /opt/data/source
-      PROCESSED_IMAGES_PATH: /opt/data/processed
     ports:
       - ${WEBSITE_PORT}:${WEBSITE_PORT}
     volumes:

@@ -1,16 +1,22 @@
 import fastify from 'fastify';
+import cookie from '@fastify/cookie';
 import websocket from '@fastify/websocket';
 import redis from '@fastify/redis';
 
+import { getConfig } from './config';
 import { compressRoutes } from './routes/compress';
 import { pingRoutes } from './routes/ping';
 import { wsRoutes } from './routes/ws';
-import { getConfig } from './config';
+import { imageRoutes } from './routes/image';
 
 async function startServer() {
   const server = fastify();
   const config = await getConfig();
 
+  server.register(cookie, {
+    secret: [config.sessionCookieSecret],
+    hook: 'onRequest',
+  });
   server.register(websocket);
   server
     .register(redis, {
@@ -25,6 +31,7 @@ async function startServer() {
   server.register(pingRoutes);
   server.register(compressRoutes);
   server.register(wsRoutes);
+  server.register(imageRoutes);
 
   server.listen({ port: config.port, host: '0.0.0.0' }, (err, address) => {
     if (err) {

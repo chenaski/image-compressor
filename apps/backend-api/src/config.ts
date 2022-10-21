@@ -29,5 +29,8 @@ export const getConfig = async () => {
   return {
     port: parseInt(port),
     redisUrl: env['REDIS_URL'],
+    sessionCookieSecret: env['SESSION_COOKIE_SECRET'] || '',
+    sourceImagesDirPath: path.resolve(env['SOURCE_IMAGES_PATH'] || ''),
+    processedImagesDirPath: path.resolve(env['PROCESSED_IMAGES_PATH'] || ''),
   };
 };
