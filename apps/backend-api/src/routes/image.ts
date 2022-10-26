@@ -1,4 +1,5 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import type { FastifySchema } from 'fastify/types/schema';
 import path from 'path';
 import { getConfig } from '../config';
 import { getSessionFromRequest } from '../session';
@@ -13,16 +14,36 @@ function createImageRequestHandler({ targetDir }: { targetDir: string }) {
 
     if (!session) {
       reply.status(403);
-      return { error: "Session cookie doesn't exist or invalid" };
+      return { message: "Session cookie doesn't exist or invalid" };
     }
 
     return path.resolve(targetDir, session.userId, image);
   };
 }
 
+const schema: FastifySchema = {
+  response: {
+    '200': {
+      type: 'string',
+    },
+    '401': {
+      type: 'object',
+      properties: {
+        message: {
+          type: 'string',
+        },
+      },
+    },
+  },
+};
+
 export async function imageRoutes(server: FastifyInstance) {
   const config = await getConfig();
 
-  server.get('/image/source/:image', createImageRequestHandler({ targetDir: config.sourceImagesDirPath }));
-  server.get('/image/processed/:image', createImageRequestHandler({ targetDir: config.processedImagesDirPath }));
+  server.get('/image/source/:image', { schema }, createImageRequestHandler({ targetDir: config.sourceImagesDirPath }));
+  server.get(
+    '/image/processed/:image',
+    { schema },
+    createImageRequestHandler({ targetDir: config.processedImagesDirPath })
+  );
 }

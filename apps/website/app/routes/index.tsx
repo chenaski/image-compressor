@@ -1,6 +1,6 @@
 import path from 'path';
 import type { ChangeEvent } from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import type { ActionArgs } from '@remix-run/node';
 import {
   NodeOnDiskFile,
@@ -13,41 +13,45 @@ import { getSession, SESSION_USER_ID } from '~/sessions';
 import { configServer } from '~/config.server';
 import { sendNewImagesInfo } from '~/api';
 
-type ActionData = { path: string }[];
+type ActionData = { error: string | null };
 
 export const action = async ({ request }: ActionArgs): Promise<ActionData> => {
-  const session = await getSession(request.headers.get('Cookie'));
+  const cookie = request.headers.get('Cookie');
+  const session = await getSession(cookie);
   const sourceImagesDir = path.resolve(configServer.sourceImagesDirPath, session.get(SESSION_USER_ID));
   const uploadHandler = unstable_composeUploadHandlers(
     unstable_createFileUploadHandler({
       maxPartSize: 1024 * 1024 * 5,
       directory: sourceImagesDir,
       file: ({ filename }) => filename,
+      avoidFileConflicts: false,
     })
   );
   const formData = await unstable_parseMultipartFormData(request, uploadHandler);
 
   const images = formData.getAll('images');
-  const response = images.reduce((response, meta) => {
+  const info = images.reduce((info, meta) => {
     if (meta instanceof NodeOnDiskFile) {
-      response.push({
-        path: path.join(sourceImagesDir, meta.name),
-      });
+      info.push({ fileName: meta.name });
     }
 
-    return response;
-  }, [] as ActionData);
+    return info;
+  }, [] as Parameters<typeof sendNewImagesInfo>[0]);
 
-  await sendNewImagesInfo(response);
+  const response = await sendNewImagesInfo(info, { cookie });
 
-  return response;
+  if (response.error) {
+    return {
+      error: response.error,
+    };
+  }
+
+  return { error: null };
 };
 
 export default function Index() {
   const actionData = useActionData<typeof action>();
   const [sourceUrls, setSourceUrls] = useState<string[] | null>(null);
-  const [serverUrls, setServerUrls] = useState<string[] | null>(null);
-  const ref = useRef<HTMLInputElement>(null);
 
   const onSelectImage = (e: ChangeEvent<HTMLInputElement>) => {
     const images = e.currentTarget.files;
@@ -55,12 +59,6 @@ export default function Index() {
     const urls = Array.from(images).map(URL.createObjectURL);
     setSourceUrls(urls);
   };
-
-  useEffect(() => {
-    if (!actionData?.length) return;
-    const urls = actionData.map((meta) => `${location.origin}/${meta.path}`);
-    setServerUrls(urls);
-  }, [actionData]);
 
   return (
     <div className={'p-5'}>
@@ -73,7 +71,6 @@ export default function Index() {
             multiple={true}
             itemType={'.jpg,.jpeg,.png,.webp,.avif'}
             onChange={onSelectImage}
-            ref={ref}
           />
         </label>
 
@@ -84,25 +81,16 @@ export default function Index() {
           Send images
         </button>
 
-        {(sourceUrls || serverUrls) && (
-          <div className={'mt-2 overflow-x-auto'}>
-            {sourceUrls && (
-              <div className={'flex'}>
-                {sourceUrls?.length &&
-                  sourceUrls.map((url) => (
-                    <img key={url} className={'max-h-[300px]'} src={url} alt="" width={'auto'} height={300} />
-                  ))}
-              </div>
-            )}
+        {actionData?.error && <div className={'mt-1 text-red-800'}>{actionData.error}</div>}
 
-            {serverUrls && (
-              <div className={'flex'}>
-                {serverUrls?.length &&
-                  serverUrls.map((url) => (
-                    <img key={url} className={'max-h-[300px]'} src={url} alt="" width={'auto'} height={300} />
-                  ))}
-              </div>
-            )}
+        {sourceUrls && (
+          <div className={'mt-2 overflow-x-auto'}>
+            <div className={'flex'}>
+              {sourceUrls?.length &&
+                sourceUrls.map((url) => (
+                  <img key={url} className={'max-h-[300px]'} src={url} alt="" width={'auto'} height={300} />
+                ))}
+            </div>
           </div>
         )}
       </Form>
