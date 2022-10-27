@@ -63,10 +63,12 @@ export default function Index() {
     const images = e.currentTarget.files;
     if (!images?.length) return;
     const urls = Array.from(images).map((image) => ({ fileName: image.name, url: URL.createObjectURL(image) }));
-    setSourceImages(urls);
     e.target.form?.requestSubmit();
     setMinLoadingThreshold(true);
-    setTimeout(() => setMinLoadingThreshold(false), 3000);
+    setTimeout(() => {
+      setMinLoadingThreshold(false);
+      setSourceImages(urls);
+    }, 3000);
   };
 
   return Object.keys(images).length === 0 ? (

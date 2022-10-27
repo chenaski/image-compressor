@@ -7,6 +7,7 @@ export interface ImagesState {
   images: Record<string, { source: string; processed: string | null }>;
   setSourceImages: (images: { fileName: string; url: string }[]) => void;
   setProcessedImages: (images: { fileName: string }[]) => void;
+  clear: () => void;
 }
 
 export const useImages = create<ImagesState>()(
@@ -34,6 +35,10 @@ export const useImages = create<ImagesState>()(
           });
         })
       );
+    },
+
+    clear: () => {
+      set({ images: {} });
     },
   }))
 );
