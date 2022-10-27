@@ -1,5 +1,6 @@
 import path from 'path';
 import type { ChangeEvent } from 'react';
+import { useState } from 'react';
 import type { ActionArgs } from '@remix-run/node';
 import {
   NodeOnDiskFile,
@@ -7,15 +8,13 @@ import {
   unstable_createFileUploadHandler,
   unstable_parseMultipartFormData,
 } from '@remix-run/node';
-import { Form, useActionData, useTransition } from '@remix-run/react';
+import { useActionData, useTransition } from '@remix-run/react';
 import { getSession, SESSION_USER_ID } from '~/sessions';
 import { configServer } from '~/config.server';
 import { sendNewImagesInfo } from '~/api';
 import { useImages } from '~/stores/images';
-
-import { Spinner } from '~/components/spinner';
-import { Icon } from '~/components/icon';
-import { useState } from 'react';
+import { Uploaded } from '~/components/uploaded';
+import { Upload } from '~/components/upload';
 
 type ActionData = { error: string | null };
 
@@ -70,39 +69,9 @@ export default function Index() {
     setTimeout(() => setMinLoadingThreshold(false), 3000);
   };
 
-  return (
-    <div className={'flex flex-col items-center justify-center h-screen'}>
-      <div className={'relative'}>
-        <Icon hideParts={isLoading} />
-        {isLoading && (
-          <Spinner className={'w-[50px] h-[50px] absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%]'} />
-        )}
-      </div>
-
-      <p className={'mt-3'}>Drop or Paste</p>
-
-      <Form method={'post'} encType="multipart/form-data" className={'mt-4'}>
-        <label className={'relative'}>
-          <input
-            className={'opacity-0 absolute inset-0 z-[-1]'}
-            aria-label={'Upload your images'}
-            name={'images'}
-            type={'file'}
-            multiple={true}
-            itemType={'.jpg,.jpeg,.png,.webp,.avif'}
-            onChange={onSelectImage}
-          />
-          <span
-            className={
-              'inline-flex items-center justify-center text-center bg-black text-white min-w-[280px] min-h-[60px] text-[18px] cursor-pointer transition hover:bg-gray-800'
-            }
-          >
-            Upload Images
-          </span>
-        </label>
-      </Form>
-
-      {actionData?.error && <div className={'mt-2 text-red-800'}>{actionData.error}</div>}
-    </div>
+  return Object.keys(images).length === 0 ? (
+    <Upload onSelect={onSelectImage} isLoading={isLoading} error={actionData?.error} />
+  ) : (
+    <Uploaded />
   );
 }
