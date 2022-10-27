@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useImages } from '~/stores/images';
 import { CloseIcon } from '~/components/close-icon';
+import { Spinner } from '~/components/spinner';
 
 export const Uploaded = () => {
   const { images, clear } = useImages();
@@ -24,7 +25,16 @@ export const Uploaded = () => {
         }
       >
         <img className={'w-full h-full object-contain object-right min-h-0'} src={source} alt="" />
-        {processed && <img className={'w-full h-full object-contain object-left min-h-0'} src={processed} alt="" />}
+        <div className={'relative min-h-0'}>
+          <img
+            className={`w-full h-full object-contain object-left ${processed ? '' : 'blur'}`}
+            src={processed || source}
+            alt=""
+          />
+          {!processed && (
+            <Spinner className={'w-[50px] h-[50px] absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%]'} />
+          )}
+        </div>
       </div>
 
       <div className={'flex overflow-x-auto mt-4 shrink-0 gap-2'}>
@@ -32,7 +42,7 @@ export const Uploaded = () => {
           return (
             <button
               key={source}
-              className={`w-[62px] h-[62px] bg-gray-200 rounded overflow-hidden border border-gray-200 transition hover:border-gray-400 group ${
+              className={`relative w-[62px] h-[62px] bg-gray-200 rounded overflow-hidden border border-gray-200 transition hover:border-gray-400 group ${
                 id === selectedImageId ? 'border-2 border-black' : ''
               }`}
               onClick={() => {
@@ -42,10 +52,11 @@ export const Uploaded = () => {
               <img
                 className={`w-full h-full object-cover group-hover:scale-110 transition group-hover:opacity-100 ${
                   id === selectedImageId ? '' : 'opacity-80'
-                }`}
+                } ${!processed ? 'blur-[1px]' : ''}`}
                 src={source}
                 alt=""
               />
+              {!processed && <Spinner className={'absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%]'} />}
             </button>
           );
         })}
