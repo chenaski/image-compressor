@@ -20,7 +20,7 @@ const setIsAlive = (socket: WebSocket & { isAlive?: boolean }, isAlive: boolean)
 export async function wsRoutes(server: FastifyInstance) {
   setInterval(() => {
     server.websocketServer.clients.forEach((socket) => {
-      if (isAlive(socket)) return socket.terminate();
+      if (!isAlive(socket)) return socket.terminate();
 
       setIsAlive(socket, false);
       socket.ping();
