@@ -1,4 +1,5 @@
 import { configClient } from '~/config.client';
+import { useImages } from '~/stores/images';
 
 interface ImageData {
   fileName: string;
@@ -25,7 +26,7 @@ export async function connect({ isReconnect }: { isReconnect?: boolean } = { isR
 
     if (!parsedData) return;
 
-    console.log('[WS] Message', parsedData);
+    useImages.getState().setProcessedImages(parsedData);
   });
 }
 

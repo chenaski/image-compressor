@@ -1,6 +1,5 @@
 import path from 'path';
 import type { ChangeEvent } from 'react';
-import { useState } from 'react';
 import type { ActionArgs } from '@remix-run/node';
 import {
   NodeOnDiskFile,
@@ -12,6 +11,7 @@ import { Form, useActionData } from '@remix-run/react';
 import { getSession, SESSION_USER_ID } from '~/sessions';
 import { configServer } from '~/config.server';
 import { sendNewImagesInfo } from '~/api';
+import { useImages } from '~/stores/images';
 
 type ActionData = { error: string | null };
 
@@ -51,13 +51,13 @@ export const action = async ({ request }: ActionArgs): Promise<ActionData> => {
 
 export default function Index() {
   const actionData = useActionData<typeof action>();
-  const [sourceUrls, setSourceUrls] = useState<string[] | null>(null);
+  const { images, setSourceImages } = useImages();
 
   const onSelectImage = (e: ChangeEvent<HTMLInputElement>) => {
     const images = e.currentTarget.files;
     if (!images?.length) return;
-    const urls = Array.from(images).map(URL.createObjectURL);
-    setSourceUrls(urls);
+    const urls = Array.from(images).map((image) => ({ fileName: image.name, url: URL.createObjectURL(image) }));
+    setSourceImages(urls);
   };
 
   return (
@@ -83,14 +83,16 @@ export default function Index() {
 
         {actionData?.error && <div className={'mt-1 text-red-800'}>{actionData.error}</div>}
 
-        {sourceUrls && (
-          <div className={'mt-2 overflow-x-auto'}>
-            <div className={'flex'}>
-              {sourceUrls?.length &&
-                sourceUrls.map((url) => (
-                  <img key={url} className={'max-h-[300px]'} src={url} alt="" width={'auto'} height={300} />
-                ))}
-            </div>
+        {!!Object.keys(images)?.length && (
+          <div className={'flex mt-2 overflow-x-auto'}>
+            {Object.values(images).map(({ source, processed }) => {
+              return (
+                <div key={source}>
+                  <img className={'h-[300px]'} src={source} alt="" width={'auto'} height={300} />
+                  {processed && <img className={'h-[300px]'} src={processed} alt="" width={'auto'} height={300} />}
+                </div>
+              );
+            })}
           </div>
         )}
       </Form>
