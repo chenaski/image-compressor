@@ -7,11 +7,15 @@ import {
   unstable_createFileUploadHandler,
   unstable_parseMultipartFormData,
 } from '@remix-run/node';
-import { Form, useActionData } from '@remix-run/react';
+import { Form, useActionData, useTransition } from '@remix-run/react';
 import { getSession, SESSION_USER_ID } from '~/sessions';
 import { configServer } from '~/config.server';
 import { sendNewImagesInfo } from '~/api';
 import { useImages } from '~/stores/images';
+
+import { Spinner } from '~/components/spinner';
+import { Icon } from '~/components/icon';
+import { useState } from 'react';
 
 type ActionData = { error: string | null };
 
@@ -51,6 +55,9 @@ export const action = async ({ request }: ActionArgs): Promise<ActionData> => {
 
 export default function Index() {
   const actionData = useActionData<typeof action>();
+  const transition = useTransition();
+  const [minLoadingThreshold, setMinLoadingThreshold] = useState(false);
+  const isLoading = minLoadingThreshold || transition.state !== 'idle';
   const { images, setSourceImages } = useImages();
 
   const onSelectImage = (e: ChangeEvent<HTMLInputElement>) => {
@@ -58,44 +65,44 @@ export default function Index() {
     if (!images?.length) return;
     const urls = Array.from(images).map((image) => ({ fileName: image.name, url: URL.createObjectURL(image) }));
     setSourceImages(urls);
+    e.target.form?.requestSubmit();
+    setMinLoadingThreshold(true);
+    setTimeout(() => setMinLoadingThreshold(false), 3000);
   };
 
   return (
-    <div className={'p-5'}>
-      <h1 className={'text-3xl font-bold underline'}>Image Compressor!</h1>
-      <Form method={'post'} encType="multipart/form-data" className={'mt-2'}>
-        <label>
+    <div className={'flex flex-col items-center justify-center h-screen'}>
+      <div className={'relative'}>
+        <Icon hideParts={isLoading} />
+        {isLoading && (
+          <Spinner className={'w-[50px] h-[50px] absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%]'} />
+        )}
+      </div>
+
+      <p className={'mt-3'}>Drop or Paste</p>
+
+      <Form method={'post'} encType="multipart/form-data" className={'mt-4'}>
+        <label className={'relative'}>
           <input
+            className={'opacity-0 absolute inset-0 z-[-1]'}
+            aria-label={'Upload your images'}
             name={'images'}
             type={'file'}
             multiple={true}
             itemType={'.jpg,.jpeg,.png,.webp,.avif'}
             onChange={onSelectImage}
           />
+          <span
+            className={
+              'inline-flex items-center justify-center text-center bg-black text-white min-w-[280px] min-h-[60px] text-[18px] cursor-pointer transition hover:bg-gray-800'
+            }
+          >
+            Upload Images
+          </span>
         </label>
-
-        <button
-          type={'submit'}
-          className={'block mt-2 px-2 py-1 rounded border border-gray-500 bg-gray-100 hover:bg-gray-200'}
-        >
-          Send images
-        </button>
-
-        {actionData?.error && <div className={'mt-1 text-red-800'}>{actionData.error}</div>}
-
-        {!!Object.keys(images)?.length && (
-          <div className={'flex mt-2 overflow-x-auto'}>
-            {Object.values(images).map(({ source, processed }) => {
-              return (
-                <div key={source}>
-                  <img className={'h-[300px]'} src={source} alt="" width={'auto'} height={300} />
-                  {processed && <img className={'h-[300px]'} src={processed} alt="" width={'auto'} height={300} />}
-                </div>
-              );
-            })}
-          </div>
-        )}
       </Form>
+
+      {actionData?.error && <div className={'mt-2 text-red-800'}>{actionData.error}</div>}
     </div>
   );
 }
