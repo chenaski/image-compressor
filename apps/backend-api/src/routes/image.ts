@@ -17,7 +17,7 @@ function createImageRequestHandler({ targetDir }: { targetDir: string }) {
       return { message: "Session cookie doesn't exist or invalid" };
     }
 
-    return path.resolve(targetDir, session.userId, image);
+    return reply.sendFile(image, path.resolve(targetDir, session.userId));
   };
 }
 

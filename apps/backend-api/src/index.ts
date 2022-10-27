@@ -2,6 +2,7 @@ import fastify from 'fastify';
 import cookie from '@fastify/cookie';
 import websocket from '@fastify/websocket';
 import redis from '@fastify/redis';
+import fastifyStatic from '@fastify/static';
 
 import { getConfig } from './config';
 import { compressRoutes } from './routes/compress';
@@ -27,6 +28,9 @@ async function startServer() {
       url: config.redisUrl,
       namespace: 'broadcast',
     });
+  server.register(fastifyStatic, {
+    root: process.cwd(),
+  });
 
   server.register(pingRoutes);
   server.register(compressRoutes);
