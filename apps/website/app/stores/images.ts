@@ -10,6 +10,10 @@ export interface ImagesState {
   clear: () => void;
 }
 
+function getImageId(fileName: string) {
+  return fileName.slice(0, fileName.lastIndexOf('.'));
+}
+
 export const useImages = create<ImagesState>()(
   devtools((set) => ({
     images: {},
@@ -18,7 +22,8 @@ export const useImages = create<ImagesState>()(
       set(
         produce((state: ImagesState) => {
           images.forEach(({ fileName, url }) => {
-            state.images[fileName] = {
+            const id = getImageId(fileName);
+            state.images[id] = {
               source: url || `${configClient.apiHttpBaseUrl}/image/source/${fileName}`,
               processed: null,
             };
@@ -30,8 +35,9 @@ export const useImages = create<ImagesState>()(
       set(
         produce((state: ImagesState) => {
           images.forEach(({ fileName }) => {
-            if (!state.images[fileName]) return;
-            state.images[fileName].processed = `${configClient.apiHttpBaseUrl}/image/processed/${fileName}`;
+            const id = getImageId(fileName);
+            if (!state.images[id]) return;
+            state.images[id].processed = `${configClient.apiHttpBaseUrl}/image/processed/${fileName}`;
           });
         })
       );

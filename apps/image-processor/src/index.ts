@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
-import fs from 'fs/promises';
 import path from 'path';
+import { compress } from 'compressor';
 import { RedisClient } from '../global';
 import { createRedisConnection } from './create-redis-connection';
 import { getConfig } from './config';
@@ -12,45 +12,42 @@ interface ImageData {
 type Message = ImageData[];
 
 const REDIS_QUEUE_ID = 'images-queue';
-const MESSAGE_IN_EVENT = 'message-in';
-const MESSAGE_OUT_EVENT = 'message-out';
-const POLLING_EVENT = 'polling';
-
 const REDIS_PUB_SUB_ID = 'finished';
+
+const HANDLE_MESSAGE = 'message-in';
+const START_POLLING = 'polling';
 
 const eventEmitter = new EventEmitter();
 
-async function messageIn({ message }: { message: string }): Promise<void> {
+async function messageIn(redis: RedisClient, { message }: { message: string }): Promise<void> {
   const config = await getConfig();
   const parsedMessage = parseMessage(message);
 
   if (!parsedMessage) {
     console.log(`[${new Date().toISOString()}] Invalid message:\n${message}`);
-    eventEmitter.emit(POLLING_EVENT);
+    eventEmitter.emit(START_POLLING);
     return;
   }
 
-  console.log(`[${new Date().toISOString()}] Process message:\n${parsedMessage}`);
+  console.log(`[${new Date().toISOString()}] Process message:\n`, parsedMessage);
 
-  const processedImagesData = [];
-
-  // process image
   for (const { userId, fileName } of parsedMessage) {
-    const src = path.resolve(config.sourceImagesDirPath, userId, fileName);
-    const dest = path.resolve(config.processedImagesDirPath, userId, fileName);
+    const srcFilePath = path.resolve(config.sourceImagesDirPath, userId, fileName);
+    const destDirPath = path.resolve(config.processedImagesDirPath, userId);
 
-    console.log(`[${new Date().toISOString()}] Save image to ${dest}`);
-
-    await fs.cp(src, dest).catch((error) => {
-      console.log(error);
-    });
-
-    processedImagesData.push({ userId, fileName });
+    try {
+      const result = await compress({ src: srcFilePath, dest: destDirPath });
+      await new Promise((res) => setTimeout(res, 3000));
+      const processedImageData = [{ userId, fileName: path.basename(result.path) }];
+      console.log(`[${new Date().toISOString()}] Send message about completion\n`, processedImageData);
+      redis.publish(REDIS_PUB_SUB_ID, JSON.stringify(processedImageData));
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'unknown error';
+      console.log(`[${new Date().toISOString()}] Error while processing:`, errorMessage);
+    }
   }
 
-  await new Promise((res) => setTimeout(res, 5000));
-
-  eventEmitter.emit(MESSAGE_OUT_EVENT, { message: JSON.stringify(processedImagesData) });
+  eventEmitter.emit(START_POLLING);
 }
 
 function parseMessage(message: unknown): Message | null {
@@ -85,13 +82,6 @@ function parseMessage(message: unknown): Message | null {
   return parsedData;
 }
 
-async function messageOut(redis: RedisClient, { message }: { message: string }): Promise<void> {
-  eventEmitter.emit(POLLING_EVENT);
-
-  console.log(`[${new Date().toISOString()}] Send message about completion`);
-  redis.publish(REDIS_PUB_SUB_ID, message);
-}
-
 async function hasMessage(redis: RedisClient): Promise<boolean> {
   const queueLength = await redis.lLen(REDIS_QUEUE_ID);
   return queueLength > 0;
@@ -105,7 +95,7 @@ async function startPolling(redis: RedisClient): Promise<void> {
       clearInterval(intervalId);
       const nextMessage = await redis.lPop(REDIS_QUEUE_ID);
       if (!nextMessage) return;
-      return eventEmitter.emit(MESSAGE_IN_EVENT, { message: nextMessage });
+      return eventEmitter.emit(HANDLE_MESSAGE, { message: nextMessage });
     }
   }, 1000);
 }
@@ -113,11 +103,10 @@ async function startPolling(redis: RedisClient): Promise<void> {
 async function main() {
   const redis = await createRedisConnection();
 
-  eventEmitter.on(MESSAGE_IN_EVENT, messageIn);
-  eventEmitter.on(MESSAGE_OUT_EVENT, (event) => messageOut(redis, event));
-  eventEmitter.on(POLLING_EVENT, startPolling.bind(undefined, redis));
+  eventEmitter.on(HANDLE_MESSAGE, (event) => messageIn(redis, event));
+  eventEmitter.on(START_POLLING, startPolling.bind(undefined, redis));
 
-  eventEmitter.emit(POLLING_EVENT);
+  eventEmitter.emit(START_POLLING);
 }
 
 (async () => {
