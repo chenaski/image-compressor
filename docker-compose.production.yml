@@ -11,6 +11,7 @@ services:
     volumes:
       - .docker/nginx/templates:/etc/nginx/templates
       - .docker/nginx/options-ssl-nginx.conf:/etc/nginx/options-ssl-nginx.conf
+      - .docker/nginx/gzip.conf:/etc/nginx/gzip.conf
       - .docker/nginx/ssl-dhparams.pem:/etc/nginx/ssl-dhparams.pem
       - ${CERTBOT_PATH}/conf:/etc/letsencrypt:ro
       - ${CERTBOT_PATH}/www:/var/www/certbot:ro
