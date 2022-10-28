@@ -27,6 +27,6 @@
     "lint": "nx run-many --target lint",
     "build": "nx run-many --target build",
     "docker:build": "nx run-many --target docker:build",
-    "dev": "nx run-many --target dev"
+    "dev": "nx run-many --parallel 3 --projects website,backend-api,image-processor --target dev"
   }
 }

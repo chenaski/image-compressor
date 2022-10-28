@@ -24,6 +24,7 @@
     "*.{json,md}": "prettier -w"
   },
   "dependencies": {
+    "compressor": "workspace:*",
     "redis": "^4.3.1"
   },
   "devDependencies": {

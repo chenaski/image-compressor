@@ -1,18 +1,43 @@
 import { configServer } from '~/config.server';
 
-const BASE_URL = `http://${configServer.apiHost}:${configServer.apiPort}`;
-
-export async function send(path: string, data: Record<string, unknown> | unknown[]) {
-  const url = `${BASE_URL}${path}`;
+export async function send(
+  path: string,
+  data: Record<string, unknown> | unknown[],
+  { cookie }: { cookie: string | null }
+) {
+  const url = `${configServer.apiBaseUrl}${path}`;
 
   console.log(`Send images data to ${url}`);
 
   return fetch(url, {
     method: 'post',
     body: JSON.stringify(data),
-  }).catch(console.log);
+    headers: {
+      'Content-Type': 'application/json',
+      Credentials: 'includes',
+      ...(cookie ? { Cookie: cookie } : {}),
+    },
+  })
+    .then(async (response) => {
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (typeof data?.message === 'string') {
+          return { data: null, error: data.message };
+        }
+        return { data: null, error: 'Unexpected error' };
+      }
+
+      return { data, error: null };
+    })
+    .catch((error) => {
+      return { data: null, error: error.message };
+    });
 }
 
-export async function sendNewImagesInfo(info: { path: string }[]) {
-  return send('/compress', info);
+export async function sendNewImagesInfo(
+  info: { fileName: string }[],
+  { cookie }: { cookie: string | null }
+): Promise<{ data: { fileName: string }[] | null; error: string | null }> {
+  return send('/compress', info, { cookie });
 }

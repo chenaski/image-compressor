@@ -4,6 +4,7 @@ services:
     environment:
       DOMAIN: ${DOMAIN}
       WEBSITE_PORT: ${WEBSITE_PORT}
+      API_PORT: ${BACKEND_API_PORT}
     ports:
       - '80:80'
       - '443:443'
@@ -17,14 +18,12 @@ services:
   website:
     image: ${DOCKERHUB_USERNAME}/image-compressor-website:${IMAGE_TAG}
     restart: always
-    env_file:
-      - ${WEBSITE_ENV_FILE_PATH}
     environment:
       PORT: ${WEBSITE_PORT}
       API_HOST: backend-api
       API_PORT: ${BACKEND_API_PORT}
+      SESSION_COOKIE_SECRET: ${SESSION_COOKIE_SECRET}
       SOURCE_IMAGES_PATH: /opt/data/source
-      PROCESSED_IMAGES_PATH: /opt/data/processed
     ports:
       - ${WEBSITE_PORT}:${WEBSITE_PORT}
     volumes:
@@ -37,8 +36,14 @@ services:
     environment:
       PORT: ${BACKEND_API_PORT}
       REDIS_URL: ${REDIS_URL}
+      SESSION_COOKIE_SECRET: ${SESSION_COOKIE_SECRET}
+      SOURCE_IMAGES_PATH: /opt/data/source
+      PROCESSED_IMAGES_PATH: /opt/data/processed
     ports:
       - ${BACKEND_API_PORT}:${BACKEND_API_PORT}
+    volumes:
+      - ${SOURCE_IMAGES_PATH}:/opt/data/source
+      - ${PROCESSED_IMAGES_PATH}:/opt/data/processed
 
   image-processor:
     image: ${DOCKERHUB_USERNAME}/image-compressor-image-processor:${IMAGE_TAG}
