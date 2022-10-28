@@ -15,13 +15,11 @@ COPY pnpm-lock.yaml .
 COPY pnpm-workspace.yaml .
 COPY package.json .
 COPY apps/backend-api/package.json apps/backend-api/package.json
-COPY packages/compressor/package.json packages/compressor/package.json
 RUN pnpm install
 
 COPY nx.json .
 COPY tsconfig.base.json .
 COPY apps/backend-api apps/backend-api
-COPY packages/compressor packages/compressor
 
 ENV NODE_ENV=production
 RUN pnpm nx run-many --target build
