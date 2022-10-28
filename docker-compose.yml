@@ -39,8 +39,13 @@ services:
       PORT: ${BACKEND_API_PORT}
       REDIS_URL: ${REDIS_URL}
       SESSION_COOKIE_SECRET: ${SESSION_COOKIE_SECRET}
+      SOURCE_IMAGES_PATH: /opt/data/source
+      PROCESSED_IMAGES_PATH: /opt/data/processed
     ports:
       - ${BACKEND_API_PORT}:${BACKEND_API_PORT}
+    volumes:
+      - ${SOURCE_IMAGES_PATH}:/opt/data/source
+      - ${PROCESSED_IMAGES_PATH}:/opt/data/processed
 
   image-processor:
     build:
