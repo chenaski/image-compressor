@@ -145,7 +145,7 @@ jobs:
           RELEASE_DIR: ~/releases/${{ env.GITHUB_SHA_SHORT }}
         run: |
           ssh $SSH_USER@$SSH_HOST "mkdir -p $RELEASE_DIR"
-          scp -r docker-compose.production.yml .docker .env .env.website $SSH_USER@$SSH_HOST:$RELEASE_DIR
+          scp -r docker-compose.production.yml .docker .env $SSH_USER@$SSH_HOST:$RELEASE_DIR
 
       - name: Pull new images and restart
         env:
