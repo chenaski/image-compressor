@@ -2,7 +2,7 @@
 
 Demo project that accomplish image conversion and compression.
 
-[Whiteboard](https://app.excalidraw.com/l/3r74dmVCrO4/8RbPSRPrBX0) |
+[Whiteboard](https://app.excalidraw.com/l/3r74dmVCrO4/6242e0fzcRO) |
 [Demo](https://image-compressor.ga/)
 
 ## Features
@@ -15,5 +15,5 @@ Demo project that accomplish image conversion and compression.
 ## Motivation
 
 - Current apps provide a minimal set of options or most often don't provide any options at all
-- Mostly it's one-to-one processing with a predefined target codec: `JPEG` to `WebP`, `JPEG` to `AVIF`, but not both at once
+- Mostly, it's one-to-one processing with a predefined target codec: `JPEG` to `WebP`, `JPEG` to `AVIF`, but not both at once
 - Modern tools like [Squoosh](https://squoosh.app/) don't fit when you need to process a lot of images
