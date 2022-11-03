@@ -10,11 +10,11 @@ export const UploadScreen: React.FC<{
   error?: string | null;
 }> = ({ onSelect, isLoading, error }) => {
   return (
-    <div className={'flex flex-col items-center justify-center h-screen'}>
+    <div className={'flex h-screen flex-col items-center justify-center'}>
       <div className={'relative'}>
         <Icon hideParts={isLoading} />
         {isLoading && (
-          <Spinner className={'w-[50px] h-[50px] absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%]'} />
+          <Spinner className={'absolute top-1/2 left-1/2 h-[50px] w-[50px] translate-x-[-50%] translate-y-[-50%]'} />
         )}
       </div>
 
@@ -23,7 +23,7 @@ export const UploadScreen: React.FC<{
       <Form method={'post'} encType="multipart/form-data" className={'mt-4'}>
         <label className={'relative'}>
           <input
-            className={'opacity-0 absolute inset-0 z-[-1]'}
+            className={'absolute inset-0 z-[-1] opacity-0'}
             aria-label={'Upload your images'}
             name={'images'}
             type={'file'}
@@ -33,7 +33,7 @@ export const UploadScreen: React.FC<{
           />
           <span
             className={
-              'inline-flex items-center justify-center text-center bg-black text-white min-w-[280px] min-h-[60px] text-[18px] cursor-pointer transition hover:bg-gray-800'
+              'inline-flex min-h-[60px] min-w-[280px] cursor-pointer items-center justify-center bg-black text-center text-[18px] text-white transition hover:bg-gray-800'
             }
           >
             Upload Images

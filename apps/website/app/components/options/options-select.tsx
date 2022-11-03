@@ -18,7 +18,7 @@ export const OptionsSelect: React.FC<OptionsSelectProps> = ({ label, items, clas
       <span className={'sr-only'}>{label}</span>
       <select
         className={
-          'appearance-none w-full h-[50px] bg-gray-400 px-4 py-2 transition hover:shadow-[inset_0_0_0_2px] hover:shadow-gray-500 focus:outline-none focus:ring focus:ring-1 focus:ring-black cursor-pointer'
+          'h-[50px] w-full cursor-pointer appearance-none bg-gray-400 px-4 py-2 transition hover:shadow-[inset_0_0_0_2px] hover:shadow-gray-500 focus:outline-none focus:ring focus:ring-1 focus:ring-black'
         }
         onChange={(e: ChangeEvent<HTMLSelectElement>) => {
           setTarget(e.target.value as unknown as Codecs);
