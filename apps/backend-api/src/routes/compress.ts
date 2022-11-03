@@ -1,4 +1,5 @@
 import { FastifyInstance } from 'fastify';
+
 import { getSessionFromRequest } from '../session';
 
 const REDIS_QUEUE_ID = 'images-queue';

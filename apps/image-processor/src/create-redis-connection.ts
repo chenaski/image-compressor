@@ -1,5 +1,7 @@
 import { createClient } from 'redis';
+
 import { RedisClient } from '../global';
+
 import { getConfig } from './config';
 
 export async function createRedisConnection(): Promise<RedisClient> {

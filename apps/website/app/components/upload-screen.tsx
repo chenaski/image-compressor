@@ -1,6 +1,7 @@
+import { Form } from '@remix-run/react';
 import type { ChangeEvent } from 'react';
 import React from 'react';
-import { Form } from '@remix-run/react';
+
 import { Icon } from '~/components/icons/icon';
 import { Spinner } from '~/components/spinner';
 

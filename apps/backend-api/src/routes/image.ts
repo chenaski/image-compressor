@@ -1,6 +1,7 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import type { FastifySchema } from 'fastify/types/schema';
 import path from 'path';
+
 import { getConfig } from '../config';
 import { getSessionFromRequest } from '../session';
 

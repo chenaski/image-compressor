@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { useImages } from '~/stores/images';
+
 import { CloseIcon } from '~/components/icons/close-icon';
-import { Spinner } from '~/components/spinner';
 import { Options } from '~/components/options/options';
+import { Spinner } from '~/components/spinner';
+import { useImages } from '~/stores/images';
 
 export const UploadedScreen = () => {
   const { images, clear } = useImages();

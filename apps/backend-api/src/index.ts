@@ -1,14 +1,14 @@
-import fastify from 'fastify';
 import cookie from '@fastify/cookie';
-import websocket from '@fastify/websocket';
 import redis from '@fastify/redis';
 import fastifyStatic from '@fastify/static';
+import websocket from '@fastify/websocket';
+import fastify from 'fastify';
 
 import { getConfig } from './config';
 import { compressRoutes } from './routes/compress';
+import { imageRoutes } from './routes/image';
 import { pingRoutes } from './routes/ping';
 import { wsRoutes } from './routes/ws';
-import { imageRoutes } from './routes/image';
 
 async function startServer() {
   const server = fastify();

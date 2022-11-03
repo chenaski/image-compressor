@@ -1,6 +1,6 @@
+import { OptionsRange } from '~/components/options/options-range';
 import type { OptionsSelectProps } from '~/components/options/options-select';
 import { OptionsSelect } from '~/components/options/options-select';
-import { OptionsRange } from '~/components/options/options-range';
 import { OptionsTitle } from '~/components/options/options-title';
 import { Codecs } from '~/constants';
 

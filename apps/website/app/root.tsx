@@ -1,8 +1,10 @@
-import type { MetaFunction, LinksFunction } from '@remix-run/node';
+import type { LinksFunction, MetaFunction } from '@remix-run/node';
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from '@remix-run/react';
-import tailwindCss from './styles/tailwind.css';
+
 import type { ExpectedVars } from '~/config.client';
 import { configServer } from '~/config.server';
+
+import tailwindCss from './styles/tailwind.css';
 
 export const meta: MetaFunction = () => ({
   charset: 'utf-8',

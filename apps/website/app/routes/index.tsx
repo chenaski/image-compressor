@@ -1,6 +1,3 @@
-import path from 'path';
-import type { ChangeEvent } from 'react';
-import { useState } from 'react';
 import type { ActionArgs } from '@remix-run/node';
 import {
   NodeOnDiskFile,
@@ -9,12 +6,16 @@ import {
   unstable_parseMultipartFormData,
 } from '@remix-run/node';
 import { useActionData, useTransition } from '@remix-run/react';
-import { getSession, SESSION_USER_ID } from '~/sessions';
-import { configServer } from '~/config.server';
+import path from 'path';
+import type { ChangeEvent } from 'react';
+import { useState } from 'react';
+
 import { sendNewImagesInfo } from '~/api';
-import { useImages } from '~/stores/images';
-import { UploadedScreen } from '~/components/uploaded-screen';
 import { UploadScreen } from '~/components/upload-screen';
+import { UploadedScreen } from '~/components/uploaded-screen';
+import { configServer } from '~/config.server';
+import { getSession, SESSION_USER_ID } from '~/sessions';
+import { useImages } from '~/stores/images';
 
 type ActionData = { error: string | null };
 

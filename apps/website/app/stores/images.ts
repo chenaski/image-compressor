@@ -1,6 +1,7 @@
+import produce from 'immer';
 import create from 'zustand';
 import { devtools } from 'zustand/middleware';
-import produce from 'immer';
+
 import { configClient } from '~/config.client';
 
 export interface ImagesState {

@@ -1,4 +1,5 @@
 import type { ChangeEvent } from 'react';
+
 import { useOptions } from '~/stores/options';
 
 export interface OptionsRangeProps {

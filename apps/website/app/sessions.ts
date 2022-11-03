@@ -1,4 +1,5 @@
 import { createCookieSessionStorage } from '@remix-run/node';
+
 import { configServer } from '~/config.server';
 
 const { getSession, commitSession, destroySession } = createCookieSessionStorage({
@@ -14,4 +15,4 @@ const { getSession, commitSession, destroySession } = createCookieSessionStorage
 });
 
 export const SESSION_USER_ID = 'userId';
-export { getSession, commitSession, destroySession };
+export { commitSession, destroySession, getSession };

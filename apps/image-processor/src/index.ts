@@ -1,9 +1,11 @@
+import { compress } from 'compressor';
 import { EventEmitter } from 'events';
 import path from 'path';
-import { compress } from 'compressor';
+
 import { RedisClient } from '../global';
-import { createRedisConnection } from './create-redis-connection';
+
 import { getConfig } from './config';
+import { createRedisConnection } from './create-redis-connection';
 
 interface ImageData {
   userId: string;
