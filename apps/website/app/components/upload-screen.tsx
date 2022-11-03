@@ -1,10 +1,10 @@
 import type { ChangeEvent } from 'react';
 import React from 'react';
 import { Form } from '@remix-run/react';
-import { Icon } from '~/components/icon';
+import { Icon } from '~/components/icons/icon';
 import { Spinner } from '~/components/spinner';
 
-export const Upload: React.FC<{
+export const UploadScreen: React.FC<{
   onSelect: (e: ChangeEvent<HTMLInputElement>) => void;
   isLoading: boolean;
   error?: string | null;

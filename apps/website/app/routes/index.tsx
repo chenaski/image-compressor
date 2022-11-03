@@ -13,8 +13,8 @@ import { getSession, SESSION_USER_ID } from '~/sessions';
 import { configServer } from '~/config.server';
 import { sendNewImagesInfo } from '~/api';
 import { useImages } from '~/stores/images';
-import { Uploaded } from '~/components/uploaded';
-import { Upload } from '~/components/upload';
+import { UploadedScreen } from '~/components/uploaded-screen';
+import { UploadScreen } from '~/components/upload-screen';
 
 type ActionData = { error: string | null };
 
@@ -72,8 +72,8 @@ export default function Index() {
   };
 
   return Object.keys(images).length === 0 ? (
-    <Upload onSelect={onSelectImage} isLoading={isLoading} error={actionData?.error} />
+    <UploadScreen onSelect={onSelectImage} isLoading={isLoading} error={actionData?.error} />
   ) : (
-    <Uploaded />
+    <UploadedScreen />
   );
 }
