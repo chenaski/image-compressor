@@ -25,7 +25,8 @@
   },
   "dependencies": {
     "compressor": "workspace:*",
-    "redis": "^4.3.1"
+    "redis": "^4.3.1",
+    "zod": "^3.19.1"
   },
   "devDependencies": {
     "@types/node": "^18.7.14",

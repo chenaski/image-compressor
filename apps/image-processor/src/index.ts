@@ -6,12 +6,7 @@ import { RedisClient } from '../global';
 
 import { getConfig } from './config';
 import { createRedisConnection } from './create-redis-connection';
-
-interface ImageData {
-  userId: string;
-  fileName: string;
-}
-type Message = ImageData[];
+import { parseMessage } from './parse-message';
 
 const REDIS_QUEUE_ID = 'images-queue';
 const REDIS_PUB_SUB_ID = 'finished';
@@ -23,13 +18,16 @@ const eventEmitter = new EventEmitter();
 
 async function messageIn(redis: RedisClient, { message }: { message: string }): Promise<void> {
   const config = await getConfig();
-  const parsedMessage = parseMessage(message);
+  const result = parseMessage(message);
 
-  if (!parsedMessage) {
-    console.log(`[${new Date().toISOString()}] Invalid message:\n${message}`);
+  if (!result.success) {
+    // TODO: send error back to the client
+    console.log(`[${new Date().toISOString()}] Invalid message:\n${result.error}`);
     eventEmitter.emit(START_POLLING);
     return;
   }
+
+  const parsedMessage = result.data;
 
   console.log(`[${new Date().toISOString()}] Process message:\n`, parsedMessage);
 
@@ -50,38 +48,6 @@ async function messageIn(redis: RedisClient, { message }: { message: string }): 
   }
 
   eventEmitter.emit(START_POLLING);
-}
-
-function parseMessage(message: unknown): Message | null {
-  if (!message || typeof message !== 'string') return null;
-
-  let parsedData: unknown;
-
-  try {
-    parsedData = JSON.parse(message);
-  } catch (error) {
-    return null;
-  }
-
-  const isNonEmptyArray = (value: unknown): value is unknown[] => {
-    return Array.isArray(value) && value.length > 0;
-  };
-  const isObject = (value: unknown): value is Record<string, unknown> => {
-    return typeof parsedData === 'object';
-  };
-  const isNonEmptyString = (value: unknown): value is string => {
-    return !(!value || typeof value !== 'string');
-  };
-  const isValidMessage = (value: unknown[]): value is Message => {
-    return value.every((item: unknown) => {
-      if (!isObject(item)) return false;
-      return isNonEmptyString(item.userId) && isNonEmptyString(item.fileName);
-    });
-  };
-
-  if (!isNonEmptyArray(parsedData) || !isValidMessage(parsedData)) return null;
-
-  return parsedData;
 }
 
 async function hasMessage(redis: RedisClient): Promise<boolean> {

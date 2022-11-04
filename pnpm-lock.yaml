@@ -70,9 +70,11 @@ importers:
       redis: ^4.3.1
       ts-node: ^10.9.1
       typescript: ^4.8.4
+      zod: ^3.19.1
     dependencies:
       compressor: link:../../packages/compressor
       redis: 4.3.1
+      zod: 3.19.1
     devDependencies:
       '@types/node': 18.7.14
       dotenv: 16.0.3
@@ -10263,6 +10265,10 @@ packages:
   /yocto-queue/0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
+
+  /zod/3.19.1:
+    resolution: {integrity: sha512-LYjZsEDhCdYET9ikFu6dVPGp2YH9DegXjdJToSzD9rO6fy4qiRYFoyEYwps88OseJlPyl2NOe2iJuhEhL7IpEA==}
+    dev: false
 
   /zustand/4.1.3_immer@9.0.16+react@18.2.0:
     resolution: {integrity: sha512-AdFyr6+4sVD6xlyc/ArQaOrleqzxJEBbAXglufZ5lgvisoz8GUN3icOrKOnX1uRSxmpmdVUQPen9hhymWIzhBg==}
