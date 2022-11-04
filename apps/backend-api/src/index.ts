@@ -3,6 +3,7 @@ import redis from '@fastify/redis';
 import fastifyStatic from '@fastify/static';
 import websocket from '@fastify/websocket';
 import fastify from 'fastify';
+import { serializerCompiler, validatorCompiler, ZodTypeProvider } from 'fastify-type-provider-zod';
 
 import { getConfig } from './config';
 import { compressRoutes } from './routes/compress';
@@ -11,8 +12,13 @@ import { pingRoutes } from './routes/ping';
 import { wsRoutes } from './routes/ws';
 
 async function startServer() {
-  const server = fastify();
+  const app = fastify();
   const config = await getConfig();
+
+  app.setValidatorCompiler(validatorCompiler);
+  app.setSerializerCompiler(serializerCompiler);
+
+  const server = app.withTypeProvider<ZodTypeProvider>();
 
   server.register(cookie, {
     secret: [config.sessionCookieSecret],

@@ -1,43 +1,32 @@
 import { FastifyInstance } from 'fastify';
+import { z as zod } from 'zod';
 
 import { getSessionFromRequest } from '../session';
 
 const REDIS_QUEUE_ID = 'images-queue';
 
+export const BodySchema = zod
+  .array(
+    zod.object({
+      fileName: zod.string().min(1),
+    })
+  )
+  .min(1);
+export type Body = zod.infer<typeof BodySchema>;
+
 export async function compressRoutes(server: FastifyInstance) {
-  server.post<{ Body: { fileName: string }[] }>(
+  server.post<{ Body: Body }>(
     '/compress',
     {
       schema: {
-        body: {
-          type: 'array',
-          minItems: 1,
-          items: {
-            type: 'object',
-            properties: {
-              fileName: {
-                type: 'string',
-              },
-            },
-          },
-        },
+        body: BodySchema,
         response: {
-          '200': {
-            type: 'object',
-            properties: {
-              error: {
-                type: 'null',
-              },
-            },
-          },
-          '401': {
-            type: 'object',
-            properties: {
-              message: {
-                type: 'string',
-              },
-            },
-          },
+          '200': zod.object({
+            error: zod.null(),
+          }),
+          '401': zod.object({
+            message: zod.string().min(1),
+          }),
         },
       },
     },

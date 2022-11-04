@@ -1,6 +1,7 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import type { FastifySchema } from 'fastify/types/schema';
 import path from 'path';
+import { z as zod } from 'zod';
 
 import { getConfig } from '../config';
 import { getSessionFromRequest } from '../session';
@@ -24,17 +25,8 @@ function createImageRequestHandler({ targetDir }: { targetDir: string }) {
 
 const schema: FastifySchema = {
   response: {
-    '200': {
-      type: 'string',
-    },
-    '401': {
-      type: 'object',
-      properties: {
-        message: {
-          type: 'string',
-        },
-      },
-    },
+    '200': zod.string().min(1),
+    '401': zod.object({ message: zod.string().min(1) }),
   },
 };
 
