@@ -33,6 +33,7 @@ importers:
   apps/backend-api:
     specifiers:
       '@fastify/cookie': ^8.3.0
+      '@fastify/cors': ^8.1.1
       '@fastify/redis': ^6.0.1
       '@fastify/static': ^6.5.0
       '@fastify/websocket': ^7.1.0
@@ -48,6 +49,7 @@ importers:
       zod: ^3.19.1
     dependencies:
       '@fastify/cookie': 8.3.0
+      '@fastify/cors': 8.1.1
       '@fastify/redis': 6.0.1
       '@fastify/static': 6.5.0
       '@fastify/websocket': 7.1.0
@@ -1547,6 +1549,13 @@ packages:
     dependencies:
       cookie: 0.5.0
       fastify-plugin: 4.2.1
+    dev: false
+
+  /@fastify/cors/8.1.1:
+    resolution: {integrity: sha512-YpkNonoJtn7Zcq2uyh0bFPcjW+njWZ9rz5gl8o5NDUvpBIPjg5m/3IHvsq91Pp/fFhLL7XgVOUyk+gMl8tb5FQ==}
+    dependencies:
+      fastify-plugin: 4.2.1
+      mnemonist: 0.39.4
     dev: false
 
   /@fastify/deepmerge/1.1.0:
@@ -7542,6 +7551,12 @@ packages:
     hasBin: true
     dev: true
 
+  /mnemonist/0.39.4:
+    resolution: {integrity: sha512-WlE2Ugow1ENH5un0OthjsjpJb/nbkUQ/jUOHtZUqh58JNzEHNxkm0tIFRAoExsANW/fTN/rxBUMFY/7jPDvxdQ==}
+    dependencies:
+      obliterator: 2.0.4
+    dev: false
+
   /morgan/1.10.0:
     resolution: {integrity: sha512-AbegBVI4sh6El+1gNwvD5YIck7nSA36weD7xvIxG4in80j/UoK8AEGaWnnz8v1GxonMCltmlNs5ZKbGvl9b1XQ==}
     engines: {node: '>= 0.8.0'}
@@ -7919,6 +7934,10 @@ packages:
       define-properties: 1.1.4
       es-abstract: 1.20.2
     dev: true
+
+  /obliterator/2.0.4:
+    resolution: {integrity: sha512-lgHwxlxV1qIg1Eap7LgIeoBWIMFibOjbrYPIPJZcI1mmGAI2m3lNYpK12Y+GBdPQ0U1hRwSord7GIaawz962qQ==}
+    dev: false
 
   /on-exit-leak-free/2.1.0:
     resolution: {integrity: sha512-VuCaZZAjReZ3vUwgOB8LxAosIurDiAW0s13rI1YwmaP++jvcxP77AWoQvenZebpCA2m8WC1/EosPYPMjnRAp/w==}

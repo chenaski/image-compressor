@@ -8,9 +8,6 @@ import { getSessionFromRequest } from '../session';
 
 function createImageRequestHandler({ targetDir }: { targetDir: string }) {
   return async (request: FastifyRequest<{ Params: { image: string } }>, reply: FastifyReply) => {
-    reply.headers({ 'Access-Control-Allow-Origin': request.headers.origin });
-    reply.headers({ 'Access-Control-Allow-Credentials': true });
-
     const { image } = request.params;
     const session = await getSessionFromRequest(request);
 

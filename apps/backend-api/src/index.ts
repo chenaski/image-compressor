@@ -1,4 +1,5 @@
 import cookie from '@fastify/cookie';
+import cors from '@fastify/cors';
 import redis from '@fastify/redis';
 import fastifyStatic from '@fastify/static';
 import websocket from '@fastify/websocket';
@@ -20,6 +21,11 @@ async function startServer() {
 
   const server = app.withTypeProvider<ZodTypeProvider>();
 
+  server.register(cors, {
+    // TODO: use safe origin
+    origin: true,
+    credentials: true,
+  });
   server.register(cookie, {
     secret: [config.sessionCookieSecret],
     hook: 'onRequest',

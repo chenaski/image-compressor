@@ -31,8 +31,6 @@ export async function compressRoutes(server: FastifyInstance) {
       },
     },
     async (request, reply) => {
-      reply.headers({ 'Access-Control-Allow-Origin': '*' });
-
       const body = request.body;
       const session = await getSessionFromRequest(request);
 
