@@ -32,7 +32,7 @@ export const OptionsRange: React.FC<OptionsRangeProps> = ({ label, className }) 
             '--range-fill-percent': `${quality}%`,
           }}
           type="range"
-          min={0}
+          min={1}
           max={100}
           value={quality}
           onChange={(e: ChangeEvent<HTMLInputElement>) => setQuality(+e.target.value)}
