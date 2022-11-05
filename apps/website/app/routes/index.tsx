@@ -1,6 +1,5 @@
 import type { ActionArgs } from '@remix-run/node';
 import {
-  NodeOnDiskFile,
   unstable_composeUploadHandlers,
   unstable_createFileUploadHandler,
   unstable_parseMultipartFormData,
@@ -31,24 +30,7 @@ export const action = async ({ request }: ActionArgs): Promise<ActionData> => {
       avoidFileConflicts: false,
     })
   );
-  const formData = await unstable_parseMultipartFormData(request, uploadHandler);
-
-  const images = formData.getAll('images');
-  const info = images.reduce((info, meta) => {
-    if (meta instanceof NodeOnDiskFile) {
-      info.push({ fileName: meta.name });
-    }
-
-    return info;
-  }, [] as Parameters<typeof sendNewImagesInfo>[0]);
-
-  const response = await sendNewImagesInfo(info, { cookie });
-
-  if (response.error) {
-    return {
-      error: response.error,
-    };
-  }
+  await unstable_parseMultipartFormData(request, uploadHandler);
 
   return { error: null };
 };
@@ -66,10 +48,12 @@ export default function Index() {
     const urls = Array.from(images).map((image) => ({ fileName: image.name, url: URL.createObjectURL(image) }));
     e.target.form?.requestSubmit();
     setMinLoadingThreshold(true);
-    setTimeout(() => {
+    // TODO: remove delay and loading state, because we can do it immediately
+    setTimeout(async () => {
       setMinLoadingThreshold(false);
       setSourceImages(urls);
-    }, 3000);
+      await sendNewImagesInfo();
+    }, 1500);
   };
 
   return Object.keys(images).length === 0 ? (

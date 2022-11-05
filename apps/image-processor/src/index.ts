@@ -31,13 +31,12 @@ async function messageIn(redis: RedisClient, { message }: { message: string }): 
 
   console.log(`[${new Date().toISOString()}] Process message:\n`, parsedMessage);
 
-  for (const { userId, fileName } of parsedMessage) {
+  for (const { userId, fileName, options } of parsedMessage) {
     const srcFilePath = path.resolve(config.sourceImagesDirPath, userId, fileName);
     const destDirPath = path.resolve(config.processedImagesDirPath, userId);
 
     try {
-      const result = await compress({ src: srcFilePath, dest: destDirPath });
-      await new Promise((res) => setTimeout(res, 3000));
+      const result = await compress({ src: srcFilePath, dest: destDirPath, options });
       const processedImageData = [{ userId, fileName: path.basename(result.path) }];
       console.log(`[${new Date().toISOString()}] Send message about completion\n`, processedImageData);
       redis.publish(REDIS_PUB_SUB_ID, JSON.stringify(processedImageData));

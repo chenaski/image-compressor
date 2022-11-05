@@ -9,6 +9,7 @@ export interface ImagesState {
   setSourceImages: (images: { fileName: string; url: string }[]) => void;
   setProcessedImages: (images: { fileName: string }[]) => void;
   clear: () => void;
+  clearProcessed: () => void;
 }
 
 function getImageId(fileName: string) {
@@ -49,6 +50,16 @@ export const useImages = create<ImagesState>()(
 
     clear: () => {
       set({ images: {} });
+    },
+
+    clearProcessed: () => {
+      set(
+        produce((state: ImagesState) => {
+          Object.keys(state.images).forEach((id) => {
+            state.images[id].processed = null;
+          });
+        })
+      );
     },
   }))
 );

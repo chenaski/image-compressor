@@ -5,6 +5,10 @@ export const MessageSchema = zod
     zod.object({
       userId: zod.string().uuid(),
       fileName: zod.string().min(1),
+      options: zod.object({
+        target: zod.enum(['webp', 'avif']),
+        quality: zod.number().positive().max(100),
+      }),
     })
   )
   .min(1);

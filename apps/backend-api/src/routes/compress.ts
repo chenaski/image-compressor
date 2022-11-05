@@ -9,6 +9,10 @@ export const BodySchema = zod
   .array(
     zod.object({
       fileName: zod.string().min(1),
+      options: zod.object({
+        target: zod.enum(['webp', 'avif']),
+        quality: zod.number().positive().max(100),
+      }),
     })
   )
   .min(1);
@@ -43,9 +47,10 @@ export async function compressRoutes(server: FastifyInstance) {
 
       console.log(`${request.ip} -> /compress\n`, body);
 
-      const message: { userId: string; fileName: string }[] = body.map(({ fileName }) => ({
+      const message: (Body[0] & { userId: string })[] = body.map(({ fileName, options }) => ({
         userId: session.userId,
         fileName,
+        options,
       }));
 
       await server.redis.common.rpush(REDIS_QUEUE_ID, JSON.stringify(message));
