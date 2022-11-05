@@ -1,6 +1,7 @@
 import { Form } from '@remix-run/react';
 import type { ChangeEvent } from 'react';
 
+import { Button } from '~/components/button';
 import { Icon } from '~/components/icons/icon';
 import { Spinner } from '~/components/spinner';
 
@@ -31,13 +32,7 @@ export const UploadScreen: React.FC<{
             itemType={'.jpg,.jpeg,.png,.webp,.avif'}
             onChange={onSelect}
           />
-          <span
-            className={
-              'inline-flex min-h-[60px] min-w-[280px] cursor-pointer items-center justify-center bg-black text-center text-[18px] text-white transition hover:bg-gray-800'
-            }
-          >
-            Upload Images
-          </span>
+          <Button fake={true}>Upload Images</Button>
         </label>
       </Form>
 
