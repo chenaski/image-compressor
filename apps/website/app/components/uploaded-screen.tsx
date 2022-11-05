@@ -27,11 +27,11 @@ export const UploadedScreen = () => {
             'mt-auto mb-auto grid aspect-video w-[80%] max-w-[800px] grid-cols-2 overflow-hidden rounded-md bg-gray-200'
           }
         >
-          <img className={'h-full min-h-0 w-full object-contain object-right'} src={source} alt="" />
+          <img className={'h-full min-h-0 w-full object-contain object-right'} src={source.url} alt="" />
           <div className={'relative min-h-0'}>
             <img
               className={`h-full w-full object-contain object-left ${processed ? '' : 'blur'}`}
-              src={processed || source}
+              src={processed || source.url}
               alt=""
             />
             {!processed && (
@@ -46,7 +46,7 @@ export const UploadedScreen = () => {
           {Object.entries(images).map(([id, { source, processed }]) => {
             return (
               <button
-                key={source}
+                key={id}
                 className={`group relative h-[62px] w-[62px] overflow-hidden rounded border border-gray-200 bg-gray-200 transition hover:border-gray-400 ${
                   id === selectedImageId ? 'border-2 border-black' : ''
                 }`}
@@ -58,7 +58,7 @@ export const UploadedScreen = () => {
                   className={`h-full w-full object-cover transition group-hover:scale-110 group-hover:opacity-100 ${
                     id === selectedImageId ? '' : 'opacity-80'
                   } ${!processed ? 'blur-[1px]' : ''}`}
-                  src={source}
+                  src={source.url}
                   alt=""
                 />
                 {!processed && (
