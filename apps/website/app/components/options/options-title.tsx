@@ -1,9 +1,10 @@
 import React from 'react';
 
+import type { FCC } from '~/global';
+
 export interface OptionsTitleProps {
   className?: string;
-  children: string;
 }
-export const OptionsTitle: React.FC<OptionsTitleProps> = ({ className = '', children }) => {
+export const OptionsTitle: FCC<OptionsTitleProps> = ({ className = '', children }) => {
   return <h2 className={`text-lg font-semibold ${className}`}>{children}</h2>;
 };
