@@ -1,5 +1,4 @@
 import type { ChangeEvent } from 'react';
-import React from 'react';
 
 import { Arrow } from '~/components/icons/arrow';
 import type { Codecs } from '~/constants';

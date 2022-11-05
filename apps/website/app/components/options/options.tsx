@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { OptionsConvert } from '~/components/options/options-convert';
 
 export interface OptionsProps {

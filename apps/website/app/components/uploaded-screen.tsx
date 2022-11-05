@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { CloseIcon } from '~/components/icons/close-icon';
 import { Options } from '~/components/options/options';

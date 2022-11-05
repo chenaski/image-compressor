@@ -1,5 +1,3 @@
-import React from 'react';
-
 import type { FCC } from '~/global';
 
 export interface OptionsTitleProps {
