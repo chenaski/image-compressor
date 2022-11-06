@@ -1,4 +1,14 @@
 {
   "root": true,
-  "extends": ["@remix-run/eslint-config", "@remix-run/eslint-config/node", "prettier"]
+  "extends": ["@remix-run/eslint-config", "@remix-run/eslint-config/node", "prettier"],
+  "plugins": ["simple-import-sort"],
+  "rules": {
+    "simple-import-sort/imports": [
+      1,
+      {
+        "groups": [["^\\u0000"], ["^node:"], ["^@?\\w"], ["^"], ["^\\.\\."], ["^\\."]]
+      }
+    ],
+    "simple-import-sort/exports": 1
+  }
 }

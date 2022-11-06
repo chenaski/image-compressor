@@ -1,9 +1,10 @@
-import type { MetaFunction, LinksFunction } from '@remix-run/node';
+import type { LinksFunction, MetaFunction } from '@remix-run/node';
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from '@remix-run/react';
-import tailwindCss from './styles/tailwind.css';
-import globalCss from './styles/global.css';
+
 import type { ExpectedVars } from '~/config.client';
 import { configServer } from '~/config.server';
+
+import tailwindCss from './styles/tailwind.css';
 
 export const meta: MetaFunction = () => ({
   charset: 'utf-8',
@@ -13,7 +14,9 @@ export const meta: MetaFunction = () => ({
 
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: tailwindCss },
-  { rel: 'stylesheet', href: globalCss },
+  { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+  { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossOrigin: 'anonymous' },
+  { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap' },
 ];
 
 export async function loader() {

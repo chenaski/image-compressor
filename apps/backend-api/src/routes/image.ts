@@ -1,14 +1,13 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import type { FastifySchema } from 'fastify/types/schema';
 import path from 'path';
+import { z as zod } from 'zod';
+
 import { getConfig } from '../config';
 import { getSessionFromRequest } from '../session';
 
 function createImageRequestHandler({ targetDir }: { targetDir: string }) {
   return async (request: FastifyRequest<{ Params: { image: string } }>, reply: FastifyReply) => {
-    reply.headers({ 'Access-Control-Allow-Origin': request.headers.origin });
-    reply.headers({ 'Access-Control-Allow-Credentials': true });
-
     const { image } = request.params;
     const session = await getSessionFromRequest(request);
 
@@ -23,17 +22,8 @@ function createImageRequestHandler({ targetDir }: { targetDir: string }) {
 
 const schema: FastifySchema = {
   response: {
-    '200': {
-      type: 'string',
-    },
-    '401': {
-      type: 'object',
-      properties: {
-        message: {
-          type: 'string',
-        },
-      },
-    },
+    '200': zod.string().min(1),
+    '401': zod.object({ message: zod.string().min(1) }),
   },
 };
 

@@ -1,13 +1,15 @@
+import produce from 'immer';
 import create from 'zustand';
 import { devtools } from 'zustand/middleware';
-import produce from 'immer';
+
 import { configClient } from '~/config.client';
 
 export interface ImagesState {
-  images: Record<string, { source: string; processed: string | null }>;
+  images: Record<string, { source: { fileName: string; url: string }; processed: string | null }>;
   setSourceImages: (images: { fileName: string; url: string }[]) => void;
   setProcessedImages: (images: { fileName: string }[]) => void;
   clear: () => void;
+  clearProcessed: () => void;
 }
 
 function getImageId(fileName: string) {
@@ -24,7 +26,10 @@ export const useImages = create<ImagesState>()(
           images.forEach(({ fileName, url }) => {
             const id = getImageId(fileName);
             state.images[id] = {
-              source: url || `${configClient.apiHttpBaseUrl}/image/source/${fileName}`,
+              source: {
+                fileName,
+                url: url || `${configClient.apiHttpBaseUrl}/image/source/${fileName}`,
+              },
               processed: null,
             };
           });
@@ -45,6 +50,16 @@ export const useImages = create<ImagesState>()(
 
     clear: () => {
       set({ images: {} });
+    },
+
+    clearProcessed: () => {
+      set(
+        produce((state: ImagesState) => {
+          Object.keys(state.images).forEach((id) => {
+            state.images[id].processed = null;
+          });
+        })
+      );
     },
   }))
 );

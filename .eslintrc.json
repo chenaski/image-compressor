@@ -1,7 +1,7 @@
 {
   "root": true,
   "ignorePatterns": ["**/*"],
-  "plugins": ["@nrwl/nx"],
+  "plugins": ["@nrwl/nx", "simple-import-sort", "import"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx"],
@@ -19,7 +19,17 @@
               }
             ]
           }
-        ]
+        ],
+        "simple-import-sort/imports": [
+          1,
+          {
+            "groups": [["^\\u0000"], ["^node:"], ["^@?\\w"], ["^"], ["^\\.\\."], ["^\\."]]
+          }
+        ],
+        "simple-import-sort/exports": 1,
+        "import/first": 1,
+        "import/newline-after-import": 1,
+        "import/no-duplicates": 1
       }
     },
     {

@@ -11,6 +11,7 @@ services:
     volumes:
       - .docker/nginx/templates:/etc/nginx/templates
       - .docker/nginx/options-ssl-nginx.conf:/etc/nginx/options-ssl-nginx.conf
+      - .docker/nginx/gzip.conf:/etc/nginx/gzip.conf
       - .docker/nginx/ssl-dhparams.pem:/etc/nginx/ssl-dhparams.pem
       - ${CERTBOT_PATH}/conf:/etc/letsencrypt:ro
       - ${CERTBOT_PATH}/www:/var/www/certbot:ro
@@ -24,8 +25,6 @@ services:
       API_PORT: ${BACKEND_API_PORT}
       SESSION_COOKIE_SECRET: ${SESSION_COOKIE_SECRET}
       SOURCE_IMAGES_PATH: /opt/data/source
-    ports:
-      - ${WEBSITE_PORT}:${WEBSITE_PORT}
     volumes:
       - ${SOURCE_IMAGES_PATH}:/opt/data/source
       - ${PROCESSED_IMAGES_PATH}:/opt/data/processed
@@ -39,8 +38,6 @@ services:
       SESSION_COOKIE_SECRET: ${SESSION_COOKIE_SECRET}
       SOURCE_IMAGES_PATH: /opt/data/source
       PROCESSED_IMAGES_PATH: /opt/data/processed
-    ports:
-      - ${BACKEND_API_PORT}:${BACKEND_API_PORT}
     volumes:
       - ${SOURCE_IMAGES_PATH}:/opt/data/source
       - ${PROCESSED_IMAGES_PATH}:/opt/data/processed
