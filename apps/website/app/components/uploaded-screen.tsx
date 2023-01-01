@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { CloseIcon } from '~/components/icons/close-icon';
+import { ImageComparisonSlider } from '~/components/image-comparison-slider/image-comparison-slider';
 import { Options } from '~/components/options/options';
 import { Spinner } from '~/components/spinner';
 import { useImages } from '~/stores/images';
@@ -22,25 +23,7 @@ export const UploadedScreen = () => {
           <CloseIcon />
         </button>
 
-        <div
-          className={
-            'mt-auto mb-auto grid aspect-video w-[80%] max-w-[800px] grid-cols-2 overflow-hidden rounded-md bg-gray-200'
-          }
-        >
-          <img className={'h-full min-h-0 w-full object-contain object-right'} src={source.url} alt="" />
-          <div className={'relative min-h-0'}>
-            <img
-              className={`h-full w-full object-contain object-left ${processed ? '' : 'blur'}`}
-              src={processed || source.url}
-              alt=""
-            />
-            {!processed && (
-              <Spinner
-                className={'absolute top-1/2 left-1/2 h-[50px] w-[50px] translate-x-[-50%] translate-y-[-50%]'}
-              />
-            )}
-          </div>
-        </div>
+        <ImageComparisonSlider leftImageSrc={source.url} rightImageSrc={processed || source.url} />
 
         <div className={'mt-4 flex shrink-0 gap-2 overflow-x-auto'}>
           {Object.entries(images).map(([id, { source, processed }]) => {
