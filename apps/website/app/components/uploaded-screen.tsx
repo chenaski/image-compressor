@@ -1,9 +1,11 @@
 import { useState } from 'react';
+import usePanZoom from 'use-pan-and-zoom';
 
 import { CloseIcon } from '~/components/icons/close-icon';
 import { ImageComparisonSlider } from '~/components/image-comparison-slider/image-comparison-slider';
 import { Options } from '~/components/options/options';
 import { Spinner } from '~/components/spinner';
+import { useDraggable } from '~/hooks/use-draggable';
 import { useImages } from '~/stores/images';
 
 export const UploadedScreen = () => {
@@ -11,8 +13,21 @@ export const UploadedScreen = () => {
   const [selectedImageId, setSelectedImageId] = useState<string>(Object.keys(images)[0]);
   const { source, processed } = images[selectedImageId];
 
+  const { transform, setContainer, panZoomHandlers } = usePanZoom();
+  const { targetRef: sliderHandleRef } = useDraggable<HTMLButtonElement>({
+    controlStyle: true,
+    axis: 'x',
+  });
+
   return (
-    <div className={'flex h-screen grow'}>
+    <div
+      className={'flex h-screen grow'}
+      ref={(node) => {
+        setContainer(node);
+      }}
+      style={{ touchAction: 'none' }}
+      {...panZoomHandlers}
+    >
       <div className={'flex grow flex-col items-center p-[36px]'}>
         <button
           onClick={clear}
@@ -23,7 +38,20 @@ export const UploadedScreen = () => {
           <CloseIcon />
         </button>
 
-        <ImageComparisonSlider leftImageSrc={source.url} rightImageSrc={processed || source.url} />
+        <ImageComparisonSlider
+          leftImageSrc={source.url}
+          rightImageSrc={processed || source.url}
+          transform={transform}
+        />
+
+        <button className={'fixed top-0 left-[50%] bottom-0 cursor-col-resize px-[20px]'} ref={sliderHandleRef}>
+          <span className={'block h-full w-[4px] border-x border-white bg-gray-500'}></span>
+          <span
+            className={
+              'absolute top-[50%] left-[50%] h-[20px] w-[20px] translate-x-[-50%] translate-y-[-50%] rounded-full bg-gray-500'
+            }
+          ></span>
+        </button>
 
         <div className={'mt-4 flex shrink-0 gap-2 overflow-x-auto'}>
           {Object.entries(images).map(([id, { source, processed }]) => {
@@ -53,7 +81,7 @@ export const UploadedScreen = () => {
         </div>
       </div>
 
-      <Options className={'w-[420px]'} />
+      <Options className={'relative z-10 w-[420px] shrink-0'} />
     </div>
   );
 };
