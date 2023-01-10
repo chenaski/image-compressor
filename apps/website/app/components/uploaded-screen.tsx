@@ -2,9 +2,10 @@ import { useState } from 'react';
 import usePanZoom from 'use-pan-and-zoom';
 
 import { CloseIcon } from '~/components/icons/close-icon';
-import { ImageComparisonSlider } from '~/components/image-comparison-slider/image-comparison-slider';
+import { ImageComparisonSliderWithRef } from '~/components/image-comparison-slider/image-comparison-slider';
 import { Options } from '~/components/options/options';
 import { Spinner } from '~/components/spinner';
+import { useComparisonSlider } from '~/hooks/use-comparison-slider';
 import { useDraggable } from '~/hooks/use-draggable';
 import { useImages } from '~/stores/images';
 
@@ -14,21 +15,21 @@ export const UploadedScreen = () => {
   const { source, processed } = images[selectedImageId];
 
   const { transform, setContainer, panZoomHandlers } = usePanZoom();
-  const { targetRef: sliderHandleRef } = useDraggable<HTMLButtonElement>({
+  const { targetRef } = useDraggable<HTMLButtonElement>({
     controlStyle: true,
     axis: 'x',
   });
+  const { intersection, sliderHandleRef, imageRef } = useComparisonSlider();
 
   return (
-    <div
-      className={'flex h-screen grow'}
-      ref={(node) => {
-        setContainer(node);
-      }}
-      style={{ touchAction: 'none' }}
-      {...panZoomHandlers}
-    >
-      <div className={'flex grow flex-col items-center p-[36px]'}>
+    <div className={'flex h-screen grow'}>
+      <div
+        className={'flex grow touch-none flex-col items-center p-[36px]'}
+        ref={(node) => {
+          setContainer(node);
+        }}
+        {...panZoomHandlers}
+      >
         <button
           onClick={clear}
           className={
@@ -38,13 +39,21 @@ export const UploadedScreen = () => {
           <CloseIcon />
         </button>
 
-        <ImageComparisonSlider
+        <ImageComparisonSliderWithRef
           leftImageSrc={source.url}
           rightImageSrc={processed || source.url}
           transform={transform}
+          intersection={intersection}
+          ref={imageRef}
         />
 
-        <button className={'fixed top-0 left-[50%] bottom-0 cursor-col-resize px-[20px]'} ref={sliderHandleRef}>
+        <button
+          className={'fixed top-0 left-[50%] bottom-0 cursor-col-resize px-[20px]'}
+          ref={(node) => {
+            targetRef.current = node;
+            sliderHandleRef.current = node;
+          }}
+        >
           <span className={'block h-full w-[4px] border-x border-white bg-gray-500'}></span>
           <span
             className={
@@ -61,7 +70,8 @@ export const UploadedScreen = () => {
                 className={`group relative h-[62px] w-[62px] overflow-hidden rounded border border-gray-200 bg-gray-200 transition hover:border-gray-400 ${
                   id === selectedImageId ? 'border-2 border-black' : ''
                 }`}
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   setSelectedImageId(id);
                 }}
               >
