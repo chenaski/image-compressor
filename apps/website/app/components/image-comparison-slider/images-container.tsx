@@ -1,7 +1,7 @@
 import type { ForwardedRef } from 'react';
 import { forwardRef } from 'react';
 
-export const ImageComparisonSlider = (
+export const ImagesContainer = (
   {
     leftImageSrc,
     rightImageSrc,
@@ -32,4 +32,4 @@ export const ImageComparisonSlider = (
   );
 };
 
-export const ImageComparisonSliderWithRef = forwardRef(ImageComparisonSlider);
+export const ImagesContainerWithRef = forwardRef(ImagesContainer);
