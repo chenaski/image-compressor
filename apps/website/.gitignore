@@ -1,5 +1,6 @@
 /.cache
 /build
 /public/build
+/storybook-static
 
 /app/styles/tailwind.css
