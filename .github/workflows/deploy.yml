@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - dev
 
 jobs:
   lint:
@@ -34,127 +35,126 @@ jobs:
 
       - name: ESLint
         run: pnpm lint
-
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        app_name:
-          - website
-          - backend-api
-          - image-processor
-    steps:
-      - name: Cancel previous runs
-        uses: styfle/cancel-workflow-action@0.10.0
-
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Set env
-        run: |
-          echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Login to DockerHub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build and push
-        uses: docker/build-push-action@v3
-        env:
-          REPOSITORY: ${{ secrets.DOCKERHUB_USERNAME }}/image-compressor-${{ matrix.app_name }}
-          TAGS: ${{ github.ref_name }}-${{ env.GITHUB_SHA_SHORT }}
-          CACHE_TAG: buildcache
-        with:
-          file: apps/${{ matrix.app_name }}/Dockerfile
-          push: true
-          tags: ${{ env.REPOSITORY }}:${{ env.TAGS }},${{ env.REPOSITORY }}:latest
-          cache-from: type=registry,ref=${{ env.REPOSITORY }}:${{ env.CACHE_TAG }}
-          cache-to: type=registry,ref=${{ env.REPOSITORY }}:${{ env.CACHE_TAG }},mode=max
-
-  deploy:
-    name: Deploy
-    runs-on: ubuntu-latest
-    needs:
-      - build
-    steps:
-      - name: Cancel previous runs
-        uses: styfle/cancel-workflow-action@0.10.0
-
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Set env
-        run: |
-          echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV
-
-      - name: Create production .env files
-        env:
-          DOMAIN: ${{ secrets.DOMAIN }}
-          COMPOSE_PROJECT_NAME: image-compressor
-          CERTBOT_PATH: ${{ secrets.CERTBOT_PATH }}
-
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          IMAGE_TAG: ${{ github.ref_name }}-${{ env.GITHUB_SHA_SHORT }}
-
-          SESSION_COOKIE_SECRET: ${{ secrets.SESSION_COOKIE_SECRET }}
-
-          SOURCE_IMAGES_PATH: ${{ secrets.SOURCE_IMAGES_PATH }}
-          PROCESSED_IMAGES_PATH: ${{ secrets.PROCESSED_IMAGES_PATH }}
-
-          WEBSITE_PORT: ${{ secrets.WEBSITE_PORT }}
-          BACKEND_API_PORT: ${{ secrets.BACKEND_API_PORT }}
-
-          REDIS_STORE_PATH: ${{ secrets.REDIS_STORE_PATH }}
-          REDIS_URL: ${{ secrets.REDIS_URL }}
-        run: |
-          export DOMAIN="$DOMAIN"
-          export COMPOSE_PROJECT_NAME="$COMPOSE_PROJECT_NAME"
-          export CERTBOT_PATH="$CERTBOT_PATH"
-          export DOCKERHUB_USERNAME="$DOCKERHUB_USERNAME"
-          export IMAGE_TAG="$IMAGE_TAG"
-          export SESSION_COOKIE_SECRET="$SESSION_COOKIE_SECRET"
-          export SOURCE_IMAGES_PATH="$SOURCE_IMAGES_PATH"
-          export PROCESSED_IMAGES_PATH="$PROCESSED_IMAGES_PATH"
-          export WEBSITE_PORT="$WEBSITE_PORT"
-          export BACKEND_API_PORT="$BACKEND_API_PORT"
-          export REDIS_STORE_PATH="$REDIS_STORE_PATH"
-          export REDIS_URL="$REDIS_URL"
-
-          envsubst < .env.production > .env
-
-      - name: Setup SSH
-        env:
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" | tr -d "\r" > ~/.ssh/id_ecdsa
-          chmod 600 ~/.ssh/id_ecdsa
-          ssh-keyscan -t ecdsa -H $SSH_HOST >> ~/.ssh/known_hosts
-
-      - name: Prepare new release directory
-        env:
-          SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-          RELEASE_DIR: ~/releases/${{ env.GITHUB_SHA_SHORT }}
-        run: |
-          ssh $SSH_USER@$SSH_HOST "mkdir -p $RELEASE_DIR"
-          scp -r docker-compose.production.yml .docker .env $SSH_USER@$SSH_HOST:$RELEASE_DIR
-
-      - name: Pull new images and restart
-        env:
-          SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-          RELEASE_DIR: ~/releases/${{ env.GITHUB_SHA_SHORT }}
-        run: |
-          ssh $SSH_USER@$SSH_HOST "\
-            cd $RELEASE_DIR && \
-            mv docker-compose.production.yml docker-compose.yml && \
-            docker compose pull && \
-            docker compose up -d"
+#  build:
+#    name: Build
+#    runs-on: ubuntu-latest
+#    strategy:
+#      matrix:
+#        app_name:
+#          - website
+#          - backend-api
+#          - image-processor
+#    steps:
+#      - name: Cancel previous runs
+#        uses: styfle/cancel-workflow-action@0.10.0
+#
+#      - name: Checkout
+#        uses: actions/checkout@v3
+#
+#      - name: Set env
+#        run: |
+#          echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV
+#
+#      - name: Set up Docker Buildx
+#        uses: docker/setup-buildx-action@v2
+#
+#      - name: Login to DockerHub
+#        uses: docker/login-action@v2
+#        with:
+#          username: ${{ secrets.DOCKERHUB_USERNAME }}
+#          password: ${{ secrets.DOCKERHUB_TOKEN }}
+#
+#      - name: Build and push
+#        uses: docker/build-push-action@v3
+#        env:
+#          REPOSITORY: ${{ secrets.DOCKERHUB_USERNAME }}/image-compressor-${{ matrix.app_name }}
+#          TAGS: ${{ github.ref_name }}-${{ env.GITHUB_SHA_SHORT }}
+#          CACHE_TAG: buildcache
+#        with:
+#          file: apps/${{ matrix.app_name }}/Dockerfile
+#          push: true
+#          tags: ${{ env.REPOSITORY }}:${{ env.TAGS }},${{ env.REPOSITORY }}:latest
+#          cache-from: type=registry,ref=${{ env.REPOSITORY }}:${{ env.CACHE_TAG }}
+#          cache-to: type=registry,ref=${{ env.REPOSITORY }}:${{ env.CACHE_TAG }},mode=max
+#
+#  deploy:
+#    name: Deploy
+#    runs-on: ubuntu-latest
+#    needs:
+#      - build
+#    steps:
+#      - name: Cancel previous runs
+#        uses: styfle/cancel-workflow-action@0.10.0
+#
+#      - name: Checkout
+#        uses: actions/checkout@v3
+#
+#      - name: Set env
+#        run: |
+#          echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV
+#
+#      - name: Create production .env files
+#        env:
+#          DOMAIN: ${{ secrets.DOMAIN }}
+#          COMPOSE_PROJECT_NAME: image-compressor
+#          CERTBOT_PATH: ${{ secrets.CERTBOT_PATH }}
+#
+#          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+#          IMAGE_TAG: ${{ github.ref_name }}-${{ env.GITHUB_SHA_SHORT }}
+#
+#          SESSION_COOKIE_SECRET: ${{ secrets.SESSION_COOKIE_SECRET }}
+#
+#          SOURCE_IMAGES_PATH: ${{ secrets.SOURCE_IMAGES_PATH }}
+#          PROCESSED_IMAGES_PATH: ${{ secrets.PROCESSED_IMAGES_PATH }}
+#
+#          WEBSITE_PORT: ${{ secrets.WEBSITE_PORT }}
+#          BACKEND_API_PORT: ${{ secrets.BACKEND_API_PORT }}
+#
+#          REDIS_STORE_PATH: ${{ secrets.REDIS_STORE_PATH }}
+#          REDIS_URL: ${{ secrets.REDIS_URL }}
+#        run: |
+#          export DOMAIN="$DOMAIN"
+#          export COMPOSE_PROJECT_NAME="$COMPOSE_PROJECT_NAME"
+#          export CERTBOT_PATH="$CERTBOT_PATH"
+#          export DOCKERHUB_USERNAME="$DOCKERHUB_USERNAME"
+#          export IMAGE_TAG="$IMAGE_TAG"
+#          export SESSION_COOKIE_SECRET="$SESSION_COOKIE_SECRET"
+#          export SOURCE_IMAGES_PATH="$SOURCE_IMAGES_PATH"
+#          export PROCESSED_IMAGES_PATH="$PROCESSED_IMAGES_PATH"
+#          export WEBSITE_PORT="$WEBSITE_PORT"
+#          export BACKEND_API_PORT="$BACKEND_API_PORT"
+#          export REDIS_STORE_PATH="$REDIS_STORE_PATH"
+#          export REDIS_URL="$REDIS_URL"
+#
+#          envsubst < .env.production > .env
+#
+#      - name: Setup SSH
+#        env:
+#          SSH_HOST: ${{ secrets.SSH_HOST }}
+#          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+#        run: |
+#          mkdir -p ~/.ssh
+#          echo "$SSH_PRIVATE_KEY" | tr -d "\r" > ~/.ssh/id_ecdsa
+#          chmod 600 ~/.ssh/id_ecdsa
+#          ssh-keyscan -t ecdsa -H $SSH_HOST >> ~/.ssh/known_hosts
+#
+#      - name: Prepare new release directory
+#        env:
+#          SSH_USER: ${{ secrets.SSH_USER }}
+#          SSH_HOST: ${{ secrets.SSH_HOST }}
+#          RELEASE_DIR: ~/releases/${{ env.GITHUB_SHA_SHORT }}
+#        run: |
+#          ssh $SSH_USER@$SSH_HOST "mkdir -p $RELEASE_DIR"
+#          scp -r docker-compose.production.yml .docker .env $SSH_USER@$SSH_HOST:$RELEASE_DIR
+#
+#      - name: Pull new images and restart
+#        env:
+#          SSH_USER: ${{ secrets.SSH_USER }}
+#          SSH_HOST: ${{ secrets.SSH_HOST }}
+#          RELEASE_DIR: ~/releases/${{ env.GITHUB_SHA_SHORT }}
+#        run: |
+#          ssh $SSH_USER@$SSH_HOST "\
+#            cd $RELEASE_DIR && \
+#            mv docker-compose.production.yml docker-compose.yml && \
+#            docker compose pull && \
+#            docker compose up -d"
