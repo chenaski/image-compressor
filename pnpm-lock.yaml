@@ -101,6 +101,7 @@ importers:
       '@remix-run/node': ^1.10.1
       '@remix-run/react': ^1.10.1
       '@remix-run/serve': ^1.10.1
+      '@remix-run/testing': ^1.10.1
       '@storybook/addon-controls': 7.0.0-beta.28
       '@storybook/addon-essentials': ^7.0.0-beta.28
       '@storybook/addon-interactions': ^7.0.0-beta.28
@@ -142,6 +143,7 @@ importers:
       '@babel/preset-typescript': 7.18.6_@babel+core@7.20.12
       '@remix-run/dev': 1.10.1_rihab5wqvvuqhydpoaq2xhpxeu
       '@remix-run/eslint-config': 1.10.1_7wljnioivepdb5txmsxtrqewnu
+      '@remix-run/testing': 1.10.1
       '@storybook/addon-controls': 7.0.0-beta.28_biqbaboplfbrettd7655fr4n2y
       '@storybook/addon-essentials': 7.0.0-beta.28_biqbaboplfbrettd7655fr4n2y
       '@storybook/addon-interactions': 7.0.0-beta.28_biqbaboplfbrettd7655fr4n2y
@@ -2571,7 +2573,6 @@ packages:
       react-dom: 18.2.0_react@18.2.0
       react-router-dom: 6.6.2_biqbaboplfbrettd7655fr4n2y
       use-sync-external-store: 1.2.0_react@18.2.0
-    dev: false
 
   /@remix-run/router/1.2.1:
     resolution: {integrity: sha512-XiY0IsyHR+DXYS5vBxpoBe/8veTeoRpMHP+vDosLZxL5bnpetzI0igkxkLZS235ldLzyfkxF+2divEwWHP3vMQ==}
@@ -2606,6 +2607,18 @@ packages:
       react-dom: 18.2.0_react@18.2.0
       set-cookie-parser: 2.5.1
       source-map: 0.7.4
+
+  /@remix-run/testing/1.10.1:
+    resolution: {integrity: sha512-BN3tbtf+bGOsUn1bYo3ujQlHnjIjipKsZUvaLh/5b/+xVNImElNrupE/pqCDsQOijf/MY4OzzlNvmGSTMAGPLQ==}
+    engines: {node: '>=14'}
+    dependencies:
+      '@remix-run/node': 1.10.1_biqbaboplfbrettd7655fr4n2y
+      '@remix-run/react': 1.10.1_biqbaboplfbrettd7655fr4n2y
+      '@remix-run/router': 1.2.1
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      react-router-dom: 6.6.2_biqbaboplfbrettd7655fr4n2y
+    dev: true
 
   /@remix-run/web-blob/3.0.4:
     resolution: {integrity: sha512-AfegzZvSSDc+LwnXV+SwROTrDtoLiPxeFW+jxgvtDAnkuCX1rrzmVJ6CzqZ1Ai0bVfmJadkG5GxtAfYclpPmgw==}
@@ -10335,7 +10348,6 @@ packages:
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-router: 6.6.2_react@18.2.0
-    dev: false
 
   /react-router/6.6.2_react@18.2.0:
     resolution: {integrity: sha512-uJPG55Pek3orClbURDvfljhqFvMgJRo59Pktywkk8hUUkTY2aRfza8Yhl/vZQXs+TNQyr6tu+uqz/fLxPICOGQ==}
@@ -10345,7 +10357,6 @@ packages:
     dependencies:
       '@remix-run/router': 1.2.1
       react: 18.2.0
-    dev: false
 
   /react/18.2.0:
     resolution: {integrity: sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==}
@@ -12063,7 +12074,6 @@ packages:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
       react: 18.2.0
-    dev: false
 
   /use/3.1.1:
     resolution: {integrity: sha512-cwESVXlO3url9YWlFW/TA9cshCEhtu7IKJ/p5soJ/gGpj7vbvFrAY/eIioQ6Dw23KjZhYgiIo8HOs1nQ2vr/oQ==}
