@@ -6,18 +6,18 @@
     "node": "16.17.0"
   },
   "devDependencies": {
-    "@nrwl/eslint-plugin-nx": "^14.7.5",
-    "@typescript-eslint/parser": "^5.36.2",
+    "@nrwl/eslint-plugin-nx": "15.5.1",
+    "@typescript-eslint/parser": "^5.48.2",
     "eslint": "8.20.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-import": "^2.26.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-import": "^2.27.4",
     "eslint-plugin-simple-import-sort": "^8.0.0",
-    "husky": "^8.0.0",
+    "husky": "^8.0.3",
     "is-ci": "^3.0.1",
-    "lint-staged": "^13.0.3",
-    "nx": "14.6.5",
-    "prettier": "^2.7.1",
-    "typescript": "^4.7.4"
+    "lint-staged": "^13.1.0",
+    "nx": "15.5.1",
+    "prettier": "^2.8.3",
+    "typescript": "^4.9.4"
   },
   "lint-staged": {
     "*.{json,md,yml}": "prettier -w"
