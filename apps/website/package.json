@@ -15,7 +15,7 @@
     "dev": "run-p \"dev:*\"",
     "dev:css": "npm run generate:css -- --watch",
     "dev:remix": "remix dev",
-    "dev:storybook": "storybook dev -p 6006",
+    "dev:storybook": "storybook dev -p 6006 --no-open",
     "generate:css": "npx tailwindcss -i app/styles/index.css -o app/styles/tailwind.css",
     "start": "remix-serve build",
     "format": "prettier -c .",
