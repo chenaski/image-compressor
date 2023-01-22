@@ -1,18 +1,14 @@
 import type { ForwardedRef } from 'react';
 import { forwardRef } from 'react';
 
+export interface ImagesContainerProps {
+  leftImageSrc: string;
+  rightImageSrc: string;
+  intersection: number;
+  transform: string;
+}
 export const ImagesContainer = (
-  {
-    leftImageSrc,
-    rightImageSrc,
-    intersection,
-    transform,
-  }: {
-    leftImageSrc: string;
-    rightImageSrc: string;
-    intersection: number;
-    transform: string;
-  },
+  { leftImageSrc, rightImageSrc, intersection, transform }: ImagesContainerProps,
   ref: ForwardedRef<HTMLDivElement>
 ) => {
   const rightImageStyles: React.CSSProperties = {
