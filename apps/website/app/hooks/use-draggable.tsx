@@ -21,6 +21,49 @@ export const useDraggable = <T1 extends HTMLElement, T2 extends HTMLElement = HT
 
   const handle = handleRef.current || targetRef.current;
 
+  const setDragStartListeners = (node: T1 | T2) => {
+    node.addEventListener('mousedown', startDragging);
+    node.addEventListener('touchstart', startDragging);
+  };
+  const unsetDragStartListeners = (node: T1 | T2) => {
+    node.removeEventListener('mousedown', startDragging);
+    node.removeEventListener('touchstart', startDragging);
+  };
+
+  const setTarget = useCallback((node: T1 | null) => {
+    if (!node) {
+      if (handle) {
+        unsetDragStartListeners(handle);
+      }
+      targetRef.current = null;
+      return;
+    }
+
+    if (handle) {
+      unsetDragStartListeners(handle);
+    }
+
+    targetRef.current = node;
+    const newHandle = handleRef.current || targetRef.current;
+
+    setDragStartListeners(newHandle);
+  }, []);
+
+  const setHandle = useCallback((node: T2 | null) => {
+    if (!node) {
+      return;
+    }
+
+    if (handle) {
+      unsetDragStartListeners(handle);
+    }
+
+    handleRef.current = node;
+    const newHandle = handleRef.current || targetRef.current;
+
+    setDragStartListeners(newHandle);
+  }, []);
+
   const startDragging = useCallback(
     (event: MouseEvent | TouchEvent) => {
       event.preventDefault();
@@ -101,20 +144,6 @@ export const useDraggable = <T1 extends HTMLElement, T2 extends HTMLElement = HT
   );
 
   useEffect(() => {
-    if (!handle) return;
-
-    handle.addEventListener('mousedown', startDragging);
-    handle.addEventListener('touchstart', startDragging);
-
-    return () => {
-      handle.removeEventListener('mousedown', startDragging);
-      handle.removeEventListener('touchstart', startDragging);
-    };
-  }, [handle, startDragging]);
-
-  useEffect(() => {
-    if (!handle) return;
-
     const setListeners = () => {
       document.addEventListener('mousemove', reposition, { passive: true });
       document.addEventListener('touchmove', reposition, { passive: true });
@@ -137,7 +166,7 @@ export const useDraggable = <T1 extends HTMLElement, T2 extends HTMLElement = HT
     }
 
     return removeListeners;
-  }, [dragging, prev]);
+  }, [dragging]);
 
   useEffect(() => {
     if (controlStyle && targetRef.current) {
@@ -149,7 +178,7 @@ export const useDraggable = <T1 extends HTMLElement, T2 extends HTMLElement = HT
         targetRef.current.style.transform = `translate(${delta.x}px, ${delta.y}px)`;
       }
     }
-  }, [axis, controlStyle, delta.x, delta.y]);
+  }, [delta.x, delta.y]);
 
   const getTargetProps = useCallback(
     () => ({
@@ -163,7 +192,7 @@ export const useDraggable = <T1 extends HTMLElement, T2 extends HTMLElement = HT
     setPrev({ x: 0, y: 0 });
   }, [setDelta, setPrev]);
 
-  return { targetRef, handleRef, getTargetProps, dragging, delta, resetState };
+  return { setTarget, setHandle, getTargetProps, dragging, delta, resetState };
 };
 
 function calcDelta({

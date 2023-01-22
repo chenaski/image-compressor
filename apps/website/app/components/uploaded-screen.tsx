@@ -16,7 +16,7 @@ export const UploadedScreen = () => {
   const { source, processed } = images[selectedImageId];
 
   const { transform, setContainer, panZoomHandlers } = usePanZoom();
-  const { targetRef } = useDraggable<HTMLButtonElement>({
+  const { setTarget } = useDraggable<HTMLButtonElement>({
     controlStyle: true,
     axis: 'x',
   });
@@ -53,7 +53,7 @@ export const UploadedScreen = () => {
 
         <DividerWithRef
           ref={(node) => {
-            targetRef.current = node;
+            setTarget(node);
             sliderHandleRef.current = node;
           }}
         />
