@@ -4,9 +4,12 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { UploadScreen } from '~/components/upload-screen';
 
 export default {
-  title: 'Components/UploadScreen',
+  title: 'Pages/UploadScreen',
   component: UploadScreen,
   tags: ['autodocs'],
+  parameters: {
+    layout: 'fullscreen',
+  },
   decorators: [
     (Story) => {
       const RemixStub = createRemixStub([
