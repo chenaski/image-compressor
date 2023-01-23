@@ -1,6 +1,5 @@
 import { Spinner } from '~/components/spinner';
 import type { ImagesState } from '~/stores/images';
-import { useImages } from '~/stores/images';
 
 export interface ImageSelectPanelProps {
   images: ImagesState['images'];
@@ -8,9 +7,7 @@ export interface ImageSelectPanelProps {
   setSelectedImageId: (id: string) => void;
 }
 
-export const SelectImagePanel = ({ selectedImageId, setSelectedImageId }: ImageSelectPanelProps) => {
-  const { images } = useImages();
-
+export const SelectImagePanel = ({ images, selectedImageId, setSelectedImageId }: ImageSelectPanelProps) => {
   return (
     <div className={'mt-4 flex shrink-0 gap-2 overflow-x-auto'}>
       {Object.entries(images).map(([id, { source, processed }]) => {

@@ -12,7 +12,7 @@ export interface ImagesState {
   clearProcessed: () => void;
 }
 
-function getImageId(fileName: string) {
+export function getImageId(fileName: string) {
   return fileName.slice(0, fileName.lastIndexOf('.'));
 }
 
