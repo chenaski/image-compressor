@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import usePanZoom from 'use-pan-and-zoom';
 
+import { CloseButton } from '~/components/close-button';
 import { CloseIcon } from '~/components/icons/close-icon';
 import { DividerWithRef } from '~/components/image-comparison-slider/divider';
 import { ImagesContainerWithRef } from '~/components/image-comparison-slider/images-container';
@@ -31,17 +32,12 @@ export const UploadedScreen = () => {
         }}
         {...panZoomHandlers}
       >
-        <button
+        <CloseButton
           onClick={(event) => {
             event.stopPropagation();
             clear();
           }}
-          className={
-            'absolute top-0 left-0 mt-4 ml-4 flex h-[30px] w-[30px] cursor-pointer items-center justify-center rounded-full bg-gray-200 transition hover:bg-[#c9cdd4]'
-          }
-        >
-          <CloseIcon />
-        </button>
+        />
 
         <ImagesContainerWithRef
           leftImageSrc={source.url}
