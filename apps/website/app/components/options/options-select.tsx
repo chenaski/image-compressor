@@ -1,6 +1,6 @@
 import type { ChangeEvent } from 'react';
 
-import { Arrow } from '~/components/icons/arrow';
+import { ArrowIcon } from '~/components/icons/arrow-icon';
 import type { Codecs } from '~/constants';
 import { useOptions } from '~/stores/options';
 
@@ -33,7 +33,7 @@ export const OptionsSelect: React.FC<OptionsSelectProps> = ({ label, items, clas
           );
         })}
       </select>
-      <Arrow className={'absolute top-[50%] right-4 translate-y-[-50%]'} />
+      <ArrowIcon className={'absolute top-[50%] right-4 translate-y-[-50%]'} />
     </label>
   );
 };
