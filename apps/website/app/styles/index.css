@@ -71,3 +71,11 @@ body {
     transform: rotate(360deg);
   }
 }
+
+@font-face {
+  font-family: 'Clash Display';
+  src: url('public/fonts/clash-display/clash-display-semibold.woff2') format('woff2');
+  font-weight: 600;
+  font-display: swap;
+  font-style: normal;
+}
