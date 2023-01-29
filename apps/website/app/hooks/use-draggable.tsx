@@ -47,6 +47,8 @@ export const useDraggable = <T1 extends HTMLElement, T2 extends HTMLElement = HT
     const newHandle = handleRef.current || targetRef.current;
 
     setDragStartListeners(newHandle);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const setHandle = useCallback((node: T2 | null) => {
@@ -62,6 +64,8 @@ export const useDraggable = <T1 extends HTMLElement, T2 extends HTMLElement = HT
     const newHandle = handleRef.current || targetRef.current;
 
     setDragStartListeners(newHandle);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const startDragging = useCallback(
@@ -166,6 +170,8 @@ export const useDraggable = <T1 extends HTMLElement, T2 extends HTMLElement = HT
     }
 
     return removeListeners;
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dragging]);
 
   useEffect(() => {
@@ -178,6 +184,8 @@ export const useDraggable = <T1 extends HTMLElement, T2 extends HTMLElement = HT
         targetRef.current.style.transform = `translate(${delta.x}px, ${delta.y}px)`;
       }
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [delta.x, delta.y]);
 
   const getTargetProps = useCallback(
