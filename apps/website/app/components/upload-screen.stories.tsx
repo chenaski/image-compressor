@@ -31,17 +31,3 @@ export const Default: Story = {
     onSelect: () => {},
   },
 };
-
-export const Loading: Story = {
-  args: {
-    ...Default.args,
-    isLoading: true,
-  },
-};
-
-export const WithError: Story = {
-  args: {
-    ...Default.args,
-    error: 'Error occurs during images uploading',
-  },
-};

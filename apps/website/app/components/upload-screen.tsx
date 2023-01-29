@@ -1,29 +1,48 @@
-import { Form } from '@remix-run/react';
-import type { ChangeEvent } from 'react';
+import { useFetcher } from '@remix-run/react';
+import type { ChangeEvent, FC } from 'react';
+import { useRef } from 'react';
 
-import { Button } from '~/components/button';
-import { Icon } from '~/components/icons/icon';
-import { Spinner } from '~/components/spinner';
+import { CloudsIcon } from '~/components/icons/clouds-icon';
+import { SiteLogoIcon } from '~/components/icons/site-logo-icon';
 
-export const UploadScreen: React.FC<{
+export const UploadScreen: FC<{
   onSelect: (e: ChangeEvent<HTMLInputElement>) => void;
-  isLoading: boolean;
-  error?: string | null;
-}> = ({ onSelect, isLoading, error }) => {
+}> = ({ onSelect }) => {
+  const fetcher = useFetcher();
+
+  const fileInput = useRef<HTMLInputElement>(null);
+  const openFileSelect = () => {
+    if (!fileInput.current) return;
+    fileInput.current.click();
+  };
+
   return (
-    <div className={'flex h-screen flex-col items-center justify-center'}>
-      <div className={'relative'}>
-        <Icon hideParts={isLoading} />
-        {isLoading && (
-          <Spinner className={'absolute top-1/2 left-1/2 h-[50px] w-[50px] translate-x-[-50%] translate-y-[-50%]'} />
-        )}
-      </div>
+    <div className={'flex h-screen flex-col items-center justify-center bg-gradient-to-b from-white to-[#E5F3FF]'}>
+      <SiteLogoIcon className={'mb-[40px]'} />
 
-      <p className={'mt-3'}>Drop or Paste</p>
+      <div
+        className={
+          'min-h-[510px] min-w-[540px] rounded-[24px] bg-white p-[12px] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_4px_20px_rgba(0,0,0,0.1)]'
+        }
+      >
+        <fetcher.Form
+          method={'post'}
+          encType="multipart/form-data"
+          className={
+            'flex h-full cursor-pointer flex-col items-center justify-center rounded-[20px] border border-dashed border-[#E7EAEE] text-center'
+          }
+          onClick={openFileSelect}
+        >
+          <CloudsIcon />
 
-      <Form method={'post'} encType="multipart/form-data" className={'mt-4'}>
-        <label className={'relative'}>
+          <p className={'line-height-[1.2] max-w-[210px] font-display text-xl font-semibold'}>
+            Drop, paste or click to <b className={'text-[#0069DD]'}>browse</b> images
+          </p>
+
+          <p className={'mt-[8px] text-sm text-[#A9B4C6]'}>png · jpg -{'>'} webp · avif</p>
+
           <input
+            ref={fileInput}
             className={'absolute inset-0 z-[-1] opacity-0'}
             aria-label={'Upload your images'}
             name={'images'}
@@ -32,11 +51,8 @@ export const UploadScreen: React.FC<{
             itemType={'.jpg,.jpeg,.png,.webp,.avif'}
             onChange={onSelect}
           />
-          <Button fake={true}>Upload Images</Button>
-        </label>
-      </Form>
-
-      {error && <div className={'mt-2 text-red-800'}>{error}</div>}
+        </fetcher.Form>
+      </div>
     </div>
   );
 };
