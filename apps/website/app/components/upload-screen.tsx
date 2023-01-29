@@ -35,11 +35,11 @@ export const UploadScreen: FC<{
         >
           <CloudsIcon />
 
-          <p className={'line-height-[1.2] max-w-[210px] font-display text-xl font-semibold'}>
+          <p className={'line-height-[1.2] max-w-[210px] font-display text-xl font-semibold font-semibold'}>
             Drop, paste or click to <b className={'text-[#0069DD]'}>browse</b> images
           </p>
 
-          <p className={'mt-[8px] text-sm text-[#A9B4C6]'}>png · jpg -{'>'} webp · avif</p>
+          <p className={'mt-[8px] font-inter text-sm text-[#A9B4C6]'}>png · jpg -{'>'} webp · avif</p>
 
           <input
             ref={fileInput}

@@ -12,12 +12,7 @@ export const meta: MetaFunction = () => ({
   viewport: 'width=device-width,initial-scale=1',
 });
 
-export const links: LinksFunction = () => [
-  { rel: 'stylesheet', href: tailwindCss },
-  { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-  { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossOrigin: 'anonymous' },
-  { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap' },
-];
+export const links: LinksFunction = () => [{ rel: 'stylesheet', href: tailwindCss }];
 
 export async function loader() {
   const env: ExpectedVars = {
@@ -38,7 +33,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className={'font-body'}>
         <Outlet />
         <script
           dangerouslySetInnerHTML={{
