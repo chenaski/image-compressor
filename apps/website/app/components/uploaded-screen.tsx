@@ -2,7 +2,6 @@ import { useState } from 'react';
 import usePanZoom from 'use-pan-and-zoom';
 
 import { CloseButton } from '~/components/close-button';
-import { CloseIcon } from '~/components/icons/close-icon';
 import { DividerWithRef } from '~/components/image-comparison-slider/divider';
 import { ImagesContainerWithRef } from '~/components/image-comparison-slider/images-container';
 import { Options } from '~/components/options/options';
@@ -33,6 +32,7 @@ export const UploadedScreen = () => {
         {...panZoomHandlers}
       >
         <CloseButton
+          className={'absolute top-[20px] left-[20px]'}
           onClick={(event) => {
             event.stopPropagation();
             clear();
