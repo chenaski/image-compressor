@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import usePanZoom from 'use-pan-and-zoom';
 
+import { AddButton } from '~/components/add-button';
 import { CloseButton } from '~/components/close-button';
 import { DividerWithRef } from '~/components/image-comparison-slider/divider';
 import { ImagesContainerWithRef } from '~/components/image-comparison-slider/images-container';
@@ -38,6 +39,8 @@ export const UploadedScreen = () => {
             clear();
           }}
         />
+
+        <AddButton className={'absolute bottom-[20px] left-[20px]'} onClick={() => {}} />
 
         <ImagesContainerWithRef
           leftImageSrc={source.url}
