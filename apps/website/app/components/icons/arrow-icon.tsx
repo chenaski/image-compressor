@@ -2,8 +2,14 @@ import type { FC } from 'react';
 
 export const ArrowIcon: FC<{ className?: string }> = ({ className }) => {
   return (
-    <svg width="14" height="8" viewBox="0 0 14 8" fill="black" className={className}>
-      <path d="M2 0L7 5L12 0L14 1L7 8L0 1L2 0Z" />
+    <svg width="14" height="14" fill="none" className={className}>
+      <path
+        stroke="#000"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.313"
+        d="M2.917 4.958 7 9.041l4.083-4.083"
+      />
     </svg>
   );
 };
