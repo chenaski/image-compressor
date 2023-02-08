@@ -73,7 +73,7 @@
 
 @font-face {
   font-family: 'Clash Display';
-  src: url('public/fonts/clash-display/clash-display-semibold.woff2') format('woff2');
+  src: url('/fonts/clash-display/clash-display-semibold.woff2') format('woff2');
   font-weight: 600;
   font-display: swap;
   font-style: normal;
@@ -81,7 +81,7 @@
 
 @font-face {
   font-family: 'DM Sans';
-  src: url('public/fonts/dm-sans/dm-sans-regular.woff2') format('woff2');
+  src: url('/fonts/dm-sans/dm-sans-regular.woff2') format('woff2');
   font-weight: 400;
   font-display: swap;
   font-style: normal;
@@ -89,7 +89,7 @@
 
 @font-face {
   font-family: 'Inter';
-  src: url('public/fonts/inter/inter-regular.woff2') format('woff2');
+  src: url('/fonts/inter/inter-regular.woff2') format('woff2');
   font-weight: 400;
   font-display: swap;
   font-style: normal;
