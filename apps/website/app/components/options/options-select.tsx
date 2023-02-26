@@ -1,30 +1,32 @@
-import type { ChangeEvent } from 'react';
+import cn from 'classnames';
+import type { FC } from 'react';
 
 import { ArrowIcon } from '~/components/icons/arrow-icon';
-import type { Codecs } from '~/constants';
-import { useOptions } from '~/stores/options';
 
 export interface OptionsSelectProps {
   label: string;
-  items: { title: string; value: Codecs }[];
+  items: { title: string; value: string }[];
   className?: string;
+  onChange: (value: string) => void;
+  value?: string;
 }
-export const OptionsSelect: React.FC<OptionsSelectProps> = ({ label, items, className }) => {
-  const target = useOptions((state) => state.target);
-  const setTarget = useOptions((state) => state.setTarget);
-
+export const OptionsSelect: FC<OptionsSelectProps> = ({ label, items, className, onChange, value }) => {
   return (
     <label className={`relative ${className}`}>
       <span className={'sr-only'}>{label}</span>
       <select
-        className={
-          'h-[50px] w-full cursor-pointer appearance-none bg-gray-400 px-4 py-2 transition hover:shadow-[inset_0_0_0_2px] hover:shadow-gray-500 focus:outline-none focus:ring focus:ring-1 focus:ring-black'
-        }
-        onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-          setTarget(e.target.value as unknown as Codecs);
+        className={cn(
+          'w-full cursor-pointer appearance-none rounded-lg bg-[#f3f3f3] px-[8px] py-[6px] text-xs text-[#333] transition',
+          { 'text-[#999]': !value }
+        )}
+        onChange={(e) => {
+          onChange(e.target.value);
         }}
-        value={target || items[0].value}
+        value={value}
       >
+        <option value="" disabled selected hidden>
+          -suffix
+        </option>
         {items.map(({ title, value }) => {
           return (
             <option key={title} value={value}>
@@ -33,7 +35,7 @@ export const OptionsSelect: React.FC<OptionsSelectProps> = ({ label, items, clas
           );
         })}
       </select>
-      <ArrowIcon className={'absolute top-[50%] right-4 translate-y-[-50%]'} />
+      <ArrowIcon className={'absolute top-[50%] right-[12px] mt-[2px] translate-y-[-50%] text-[#222] opacity-50'} />
     </label>
   );
 };

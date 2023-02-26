@@ -1,7 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { useState } from 'react';
 
+import type { OptionsSelectProps } from '~/components/options/options-select';
 import { OptionsSelect } from '~/components/options/options-select';
-import { Codecs } from '~/constants';
+import { RenameOptions } from '~/constants';
 
 export default {
   title: 'Components/Options/OptionsSelect',
@@ -9,19 +11,27 @@ export default {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <div style={{ maxWidth: 500 }}>
+      <div style={{ maxWidth: 200 }}>
         <Story />
       </div>
     ),
   ],
 } satisfies Meta<typeof OptionsSelect>;
 
+const optionsSelectProps = {
+  label: 'Rename options',
+  items: [
+    { title: 'Replace', value: RenameOptions.replace },
+    { title: 'Prefix', value: RenameOptions.prefix },
+    { title: 'Suffix', value: RenameOptions.suffix },
+  ],
+} satisfies Partial<OptionsSelectProps>;
+const OptionsSelectWithState = () => {
+  const [value, setValue] = useState<RenameOptions | undefined>(undefined);
+  const onChange = (value: string) => setValue(value as RenameOptions);
+  return <OptionsSelect {...optionsSelectProps} onChange={onChange} value={value} />;
+};
+
 export const Default: StoryObj<typeof OptionsSelect> = {
-  args: {
-    label: 'Codec',
-    items: [
-      { title: 'WebP', value: Codecs.webp },
-      { title: 'AVIF', value: Codecs.avif },
-    ],
-  },
+  render: () => <OptionsSelectWithState />,
 };

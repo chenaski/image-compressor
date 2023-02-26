@@ -2,13 +2,13 @@ import type { FC } from 'react';
 
 export const ArrowIcon: FC<{ className?: string }> = ({ className }) => {
   return (
-    <svg width="14" height="14" fill="none" className={className}>
+    <svg width="10" height="10" fill="none" viewBox="0 0 10 10" className={className}>
       <path
-        stroke="#000"
+        stroke="currentColor"
         strokeLinecap="round"
         strokeLinejoin="round"
-        strokeWidth="1.313"
-        d="M2.917 4.958 7 9.041l4.083-4.083"
+        strokeWidth="1.3"
+        d="m1.597 3.298 3.402 3.403 3.403-3.403"
       />
     </svg>
   );
