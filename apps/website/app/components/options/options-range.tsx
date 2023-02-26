@@ -1,6 +1,7 @@
 import cn from 'classnames';
 import type { ChangeEvent, FC } from 'react';
 
+import { OptionsInput } from '~/components/options/options-input';
 import { useOptions } from '~/stores/options';
 
 export interface OptionsRangeProps {
@@ -32,10 +33,7 @@ export const OptionsRange: FC<OptionsRangeProps> = ({ label, className }) => {
       </label>
 
       <label>
-        <input
-          className={
-            'w-[18px] appearance-none border-b border-dashed border-[#007AFF] bg-transparent text-center transition focus:outline-0'
-          }
+        <OptionsInput
           type="text"
           inputMode={'numeric'}
           onChange={(e: ChangeEvent<HTMLInputElement>) => setQuality(+e.target.value)}
