@@ -8,7 +8,7 @@ export default {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <div style={{ maxWidth: 500 }}>
+      <div style={{ maxWidth: 300 }}>
         <Story />
       </div>
     ),

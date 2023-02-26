@@ -1,7 +1,7 @@
 import cn from 'classnames';
-import type { HTMLProps } from 'react';
+import type { FC, HTMLProps } from 'react';
 
-export const OptionsInput = ({ className, ...props }: HTMLProps<HTMLInputElement>) => {
+export const OptionsInput: FC<HTMLProps<HTMLInputElement>> = ({ className, ...props }) => {
   return (
     <input
       className={cn(
