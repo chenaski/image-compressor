@@ -1,6 +1,7 @@
 import cn from 'classnames';
 import type { ChangeEvent, FC } from 'react';
 
+import { OptionsControlTitle } from '~/components/options/options-control-title';
 import { OptionsInput } from '~/components/options/options-input';
 import { OptionsRange } from '~/components/options/options-range';
 
@@ -23,7 +24,7 @@ export const OptionsNumericControl: FC<OptionsNumericControlProps> = ({
 }) => {
   return (
     <div className={cn(`flex items-center`, className)}>
-      <span className={'mr-auto text-xs font-medium text-[#666]'}>{label}</span>
+      <OptionsControlTitle className={'mr-auto'}>{label}</OptionsControlTitle>
 
       <label>
         <OptionsInput
