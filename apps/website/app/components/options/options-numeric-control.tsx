@@ -23,10 +23,10 @@ export const OptionsNumericControl: FC<OptionsNumericControlProps> = ({
   className,
 }) => {
   return (
-    <div className={cn(`flex items-center`, className)}>
-      <OptionsControlTitle className={'mr-auto'}>{label}</OptionsControlTitle>
+    <div className={cn('flex items-center', className)}>
+      <label className={'flex grow cursor-pointer items-center justify-between'}>
+        <OptionsControlTitle>{label}</OptionsControlTitle>
 
-      <label>
         <OptionsInput
           type="text"
           inputMode={'numeric'}
