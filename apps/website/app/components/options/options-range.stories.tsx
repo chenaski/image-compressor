@@ -15,8 +15,4 @@ export default {
   ],
 } satisfies Meta<typeof OptionsRange>;
 
-export const Default: StoryObj<typeof OptionsRange> = {
-  args: {
-    label: 'Quality',
-  },
-};
+export const Default: StoryObj<typeof OptionsRange> = {};
