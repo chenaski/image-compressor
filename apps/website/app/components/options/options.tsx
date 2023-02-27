@@ -1,6 +1,5 @@
 import { sendNewImagesInfo } from '~/api';
 import { Button } from '~/components/button';
-import { OptionsConvert } from '~/components/options/options-convert';
 import { useImages } from '~/stores/images';
 
 export interface OptionsProps {
@@ -16,7 +15,6 @@ export const Options: React.FC<OptionsProps> = ({ className = '' }) => {
 
   return (
     <div className={`flex flex-col bg-gray-200 p-5 ${className}`}>
-      <OptionsConvert />
       <Button className={'mt-auto'} onClick={updateImages}>
         Update
       </Button>
