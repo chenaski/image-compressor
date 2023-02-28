@@ -4,16 +4,15 @@ import type { FC } from 'react';
 import { ArrowIcon } from '~/components/icons/arrow-icon';
 
 export interface OptionsSelectProps {
-  label: string;
   items: { title: string; value: string }[];
-  className?: string;
   onChange: (value: string) => void;
   value?: string;
+  placeholder?: string;
+  className?: string;
 }
-export const OptionsSelect: FC<OptionsSelectProps> = ({ label, items, className, onChange, value }) => {
+export const OptionsSelect: FC<OptionsSelectProps> = ({ items, onChange, value, placeholder, className }) => {
   return (
-    <label className={`relative ${className}`}>
-      <span className={'sr-only'}>{label}</span>
+    <div className={cn('relative', className)}>
       <select
         className={cn(
           'w-full cursor-pointer appearance-none rounded-lg bg-[#f3f3f3] px-[8px] py-[6px] text-xs text-[#333] transition',
@@ -24,9 +23,11 @@ export const OptionsSelect: FC<OptionsSelectProps> = ({ label, items, className,
         }}
         value={value}
       >
-        <option value="" disabled selected hidden>
-          -suffix
-        </option>
+        {placeholder && (
+          <option value="" disabled selected hidden>
+            {placeholder}
+          </option>
+        )}
         {items.map(({ title, value }) => {
           return (
             <option key={title} value={value}>
@@ -35,7 +36,9 @@ export const OptionsSelect: FC<OptionsSelectProps> = ({ label, items, className,
           );
         })}
       </select>
-      <ArrowIcon className={'absolute top-[50%] right-[12px] mt-[2px] translate-y-[-50%] text-[#222] opacity-50'} />
-    </label>
+      <ArrowIcon
+        className={'pointer-events-none absolute top-[50%] right-[12px] translate-y-[-50%] text-[#222] opacity-50'}
+      />
+    </div>
   );
 };

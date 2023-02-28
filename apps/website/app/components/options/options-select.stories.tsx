@@ -19,12 +19,12 @@ export default {
 } satisfies Meta<typeof OptionsSelect>;
 
 const optionsSelectProps = {
-  label: 'Rename options',
   items: [
     { title: 'Replace', value: RenameOptions.replace },
     { title: 'Prefix', value: RenameOptions.prefix },
     { title: 'Suffix', value: RenameOptions.suffix },
   ],
+  placeholder: '-suffix',
 } satisfies Partial<OptionsSelectProps>;
 const OptionsSelectWithState = () => {
   const [value, setValue] = useState<RenameOptions | undefined>(undefined);
