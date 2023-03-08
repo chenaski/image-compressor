@@ -5,7 +5,7 @@ import { AddButton } from '~/components/add-button';
 import { CloseButton } from '~/components/close-button';
 import { DividerWithRef } from '~/components/image-comparison-slider/divider';
 import { ImagesContainerWithRef } from '~/components/image-comparison-slider/images-container';
-import { Options } from '~/components/options/options';
+import { OptionsPanel } from '~/components/options/options-panel';
 import { SelectImagePanel } from '~/components/select-image-panel';
 import { useComparisonSlider } from '~/hooks/use-comparison-slider';
 import { useDraggable } from '~/hooks/use-draggable';
@@ -60,7 +60,7 @@ export const UploadedScreen = () => {
         <SelectImagePanel images={images} selectedImageId={selectedImageId} setSelectedImageId={setSelectedImageId} />
       </div>
 
-      <Options className={'relative z-10 w-[420px] shrink-0'} />
+      <OptionsPanel className={'relative z-10 w-[335px] shrink-0'} />
     </div>
   );
 };

@@ -9,7 +9,7 @@ export interface OptionsSelectControlProps {
   items: { title: string; value: string }[];
   value: string;
   onChange: (value: string) => void;
-  placeholder: string;
+  placeholder?: string;
   className?: string;
 }
 

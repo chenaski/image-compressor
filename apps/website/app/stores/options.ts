@@ -1,14 +1,16 @@
+import produce from 'immer';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
-import { Codecs } from '~/constants';
+import type { CodecOptionValues, OptionKey, OptionsByCodec, OptionValue } from '~/constants';
+import { Codecs, options } from '~/constants';
 
 export interface OptionsState {
   target: Codecs;
   setTarget: (codec: Codecs) => void;
 
-  quality: number;
-  setQuality: (quality: number) => void;
+  options: OptionsByCodec;
+  setOption: (optionKey: OptionKey, value: OptionValue) => void;
 }
 
 export const useOptions = create<OptionsState>()(
@@ -19,10 +21,27 @@ export const useOptions = create<OptionsState>()(
         target: codec,
       }),
 
-    quality: 60,
-    setQuality: (quality) =>
-      set({
-        quality,
+    options: Object.entries(options).reduce(
+      (result, [codec, codecOptions]) => ({
+        ...result,
+        [codec]: Object.entries(codecOptions).reduce(
+          (acc, [optionKey, optionData]) => ({
+            ...acc,
+            [optionKey]: optionData.defaultValue,
+          }),
+          {} as CodecOptionValues
+        ),
       }),
+      {} as OptionsByCodec
+    ),
+    setOption: (optionKey, value) =>
+      set(
+        produce((state: OptionsState) => {
+          const currentCodecOptions = state.options[state.target];
+          if (optionKey in currentCodecOptions) {
+            currentCodecOptions[optionKey] = value;
+          }
+        })
+      ),
   }))
 );
