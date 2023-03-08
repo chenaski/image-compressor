@@ -1,13 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 
-import { OptionsSelectControl } from '~/components/options/options-select-control';
+import { OptionsSelectControl } from '~/components/options/controls/options-select-control';
 import { RenameOptions } from '~/constants';
 
 export default {
-  title: 'Components/Options/OptionsSelectControl',
+  title: 'Components/Options/Controls/OptionsSelectControl',
   component: OptionsSelectControl,
-  tags: ['autodocs'],
   decorators: [
     (Story) => (
       <div style={{ maxWidth: 300 }}>

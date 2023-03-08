@@ -1,12 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 
-import { OptionsNumericControl } from '~/components/options/options-numeric-control';
+import { OptionsNumericControl } from '~/components/options/controls/options-numeric-control';
 
 export default {
-  title: 'Components/Options/OptionsNumericControl',
+  title: 'Components/Options/Controls/OptionsNumericControl',
   component: OptionsNumericControl,
-  tags: ['autodocs'],
   decorators: [
     (Story) => (
       <div style={{ maxWidth: 300 }}>

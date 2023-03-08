@@ -1,9 +1,9 @@
 import cn from 'classnames';
 import type { FC } from 'react';
 
-import { OptionsBooleanControl } from '~/components/options/options-boolean-control';
-import { OptionsNumericControl } from '~/components/options/options-numeric-control';
-import { OptionsSelectControl } from '~/components/options/options-select-control';
+import { OptionsBooleanControl } from '~/components/options/controls/options-boolean-control';
+import { OptionsNumericControl } from '~/components/options/controls/options-numeric-control';
+import { OptionsSelectControl } from '~/components/options/controls/options-select-control';
 import type { OptionKey, OptionValue } from '~/constants';
 import { options } from '~/constants';
 import { useOptions } from '~/stores/options';
