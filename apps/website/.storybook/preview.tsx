@@ -9,3 +9,11 @@ export const parameters = {
     },
   },
 };
+
+export const decorators = [
+  (Story) => (
+    <div className={'font-body text-[#333]'}>
+      <Story />
+    </div>
+  ),
+];
