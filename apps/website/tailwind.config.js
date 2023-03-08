@@ -7,8 +7,8 @@ module.exports = {
     extend: {
       fontFamily: {
         display: ['Clash Display', ...defaultTheme.fontFamily.sans],
-        body: ['DM Sans', 'Inter', ...defaultTheme.fontFamily.sans],
-        inter: ['Inter', ...defaultTheme.fontFamily.sans],
+        body: ['Inter', ...defaultTheme.fontFamily.sans],
+        dm: ['DM Sans', 'Inter', ...defaultTheme.fontFamily.sans],
       },
       boxShadow: {
         button:
