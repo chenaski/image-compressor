@@ -12,7 +12,7 @@ export const parameters = {
 
 export const decorators = [
   (Story) => (
-    <div className={'font-body text-[#333]'}>
+    <div className={'font-body text-[#333] antialiased'}>
       <Story />
     </div>
   ),

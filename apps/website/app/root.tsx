@@ -33,7 +33,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className={'font-body text-[#333]'}>
+      <body className={'font-body text-[#333] antialiased'}>
         <Outlet />
         <script
           dangerouslySetInnerHTML={{
