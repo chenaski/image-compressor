@@ -3,7 +3,7 @@ import { mergeConfig } from 'vite';
 import { StorybookConfig } from '@storybook/react-vite';
 
 const config: StorybookConfig = {
-  stories: ['../app/components/**/*.stories.@(mdx|tsx)'],
+  stories: ['../app/components/**/*.stories.@(mdx|tsx)', '../stories/**/*.@(mdx|tsx)'],
   addons: [
     '@storybook/addon-links',
     '@storybook/addon-essentials',
@@ -13,6 +13,7 @@ const config: StorybookConfig = {
   ],
   framework: {
     name: '@storybook/react-vite',
+    options: {},
   },
   docs: {
     autodocs: 'tag',
