@@ -9,19 +9,28 @@ export default {
       secondary: '#666',
       tertiary: '#999',
       inverted: '#fff',
+
       bgBase: '#fff',
       bgPrimary: '#f3f3f3',
       bgSecondary: '#eee',
       bgTertiary: '#ddd',
+
       iconPrimary: '#222',
       iconSecondary: '#22222280',
       iconInverted: '#fff',
+
       strokeFieldDefault: '#dddddd',
       strokeFieldActive: '#0084ff80',
       strokeSecondary: '#e7eaee',
+
       white: '#fff',
       black: '#000',
       accent: '#0084ff',
+
+      accentHover: '#007aec',
+      accentActive: '#0071db',
+      secondaryHover: '#eee',
+      secondaryActive: '#ddd',
     },
     extend: {
       fontFamily: {
